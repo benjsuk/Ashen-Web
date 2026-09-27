@@ -11,11 +11,11 @@ import "@mantine/core/styles.css";
 import { useEffect, useState } from "react";
 import { useForm } from "@mantine/form";
 import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
-import type { User } from "firebase/auth"
+import type { User } from "firebase/auth";
 import { app, auth } from "./firebaseL";
 
 function App() {
-  const [user, setUser] = useState<User>(); 
+  const [user, setUser] = useState<User>();
 
   const form = useForm({
     mode: "uncontrolled",
@@ -32,7 +32,7 @@ function App() {
   });
 
   async function signIn(method: string, values: any) {
-        if (method == "E&P") {
+    if (method == "E&P") {
       try {
         await signInWithEmailAndPassword(auth, values.email, values.password);
       } catch (e) {
@@ -43,12 +43,12 @@ function App() {
   }
 
   useEffect(() => {
-  const unsubscribe = onAuthStateChanged(auth, (user) => {
-    setUser(user ?? undefined);   // user is `User | null` here
-    alert("BACON")
-  });
-  return unsubscribe;
-}, []);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user ?? undefined); // user is `User | null` here
+      alert("BACON");
+    });
+    return unsubscribe;
+  }, []);
 
   return (
     <Center h="100vh">
