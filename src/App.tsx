@@ -86,17 +86,20 @@ function App() {
     });
   }
 
-  function transactionDisplay(trsn: any){
+  function transactionDisplay(trsn: any) {
     return (
       <>
-      <Card shadow="sm" withBorder>
-        <Stack>
-          <Title ta="center" order={3}>{trsn.description} • {trsn.direction == "income" ? "" : "-"}£{trsn.amount}</Title>
-          <Text>ID: {trsn.transactionID}</Text>
+        <Card shadow="sm" withBorder>
+          <Stack>
+            <Title ta="center" order={3}>
+              {trsn.description} • {trsn.direction == "income" ? "" : "-"}£
+              {trsn.amount}
+            </Title>
+            <Text>ID: {trsn.transactionID}</Text>
           </Stack>
-      </Card>
+        </Card>
       </>
-    )
+    );
   }
 
   useEffect(() => {
@@ -143,9 +146,9 @@ function App() {
             Pull Transactions
           </Button>
           <List>
-            {transactions?.map((transaction) => (
-              transactionDisplay(transaction)
-            ))}
+            {transactions?.map((transaction) =>
+              transactionDisplay(transaction),
+            )}
           </List>
           <Button
             onClick={async () => {
@@ -154,7 +157,7 @@ function App() {
                 "TEST",
                 new Date(),
                 "TEST",
-                 Math.floor(Math.random() * 100) > 50 ? "expense" : "income",
+                Math.floor(Math.random() * 100) > 50 ? "expense" : "income",
               );
             }}
           >
