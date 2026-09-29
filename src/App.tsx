@@ -1,5 +1,6 @@
 import {
   Button,
+  Card,
   Center,
   Group,
   List,
@@ -85,6 +86,19 @@ function App() {
     });
   }
 
+  function transactionDisplay(trsn: any){
+    return (
+      <>
+      <Card shadow="sm" withBorder>
+        <Stack>
+          <Title ta="center" order={3}>{trsn.description} • {trsn.direction == "income" ? "" : "-"}£{trsn.amount}</Title>
+          <Text>ID: {trsn.transactionID}</Text>
+          </Stack>
+      </Card>
+      </>
+    )
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user ?? undefined);
@@ -130,21 +144,17 @@ function App() {
           </Button>
           <List>
             {transactions?.map((transaction) => (
-              <List.Item>
-                Amount: {transaction.amount}
-                Desc: {transaction.description}
-                ID: {transaction.transactionID}
-              </List.Item>
+              transactionDisplay(transaction)
             ))}
           </List>
           <Button
             onClick={async () => {
               makeTransaction(
                 Math.floor(Math.random() * 100),
-                "cheese",
+                "TEST",
                 new Date(),
-                "food",
-                "expense",
+                "TEST",
+                 Math.floor(Math.random() * 100) > 50 ? "expense" : "income",
               );
             }}
           >
