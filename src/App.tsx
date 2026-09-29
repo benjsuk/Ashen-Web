@@ -5,6 +5,7 @@ import {
   List,
   PasswordInput,
   Stack,
+  Text,
   TextInput,
   Title,
 } from "@mantine/core";
@@ -22,6 +23,7 @@ import { auth } from "./firebaseClient";
 
 function App() {
   const [user, setUser] = useState<User>();
+  const [transactions, setTransactions] = useState<any[]>();
 
   const form = useForm({
     mode: "uncontrolled",
@@ -46,6 +48,41 @@ function App() {
         console.log(form.errors);
       }
     }
+  }
+
+  async function getTransactions() {
+    var result;
+    const data = await fetch("https://api-ashen.benjs.uk/transactions", {
+      headers: {
+        Authorization: "Bearer " + (await user?.getIdToken()),
+      },
+    });
+    result = await data.json();
+    console.log(result);
+    setTransactions(await result);
+  }
+
+  async function makeTransaction(
+    amount: number,
+    description: string,
+    date: Date,
+    category: string,
+    direction: string,
+  ) {
+    await fetch("https://api-ashen.benjs.uk/transactions", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + (await user?.getIdToken()),
+      },
+      method: "POST",
+      body: JSON.stringify({
+        amount: amount,
+        description: description,
+        date: date.toISOString(),
+        category: category,
+        direction: direction,
+      }),
+    });
   }
 
   useEffect(() => {
@@ -84,6 +121,35 @@ function App() {
             <List.Item>UID: {user?.uid}</List.Item>
             <List.Item>Name: {user?.displayName}</List.Item>
           </List>
+          <Button
+            onClick={async () => {
+              getTransactions();
+            }}
+          >
+            Pull Transactions
+          </Button>
+          <List>
+            {transactions?.map((transaction) => (
+              <List.Item>
+                Amount: {transaction.amount}
+                Desc: {transaction.description}
+                ID: {transaction.transactionID}
+              </List.Item>
+            ))}
+          </List>
+          <Button
+            onClick={async () => {
+              makeTransaction(
+                Math.floor(Math.random() * 100),
+                "cheese",
+                new Date(),
+                "food",
+                "expense",
+              );
+            }}
+          >
+            Make Test Transaction
+          </Button>
           <Button
             onClick={async () => {
               await signOut(auth);
