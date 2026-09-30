@@ -1,14 +1,15 @@
-import { Button, Card, List, Stack, Text, Title } from "@mantine/core";
-import { useState } from "react";
+import { Button, Card, Image, List, Stack, Text, Title } from "@mantine/core";
+import { useEffect, useState } from "react";
 import { auth } from "../firebaseClient";
 import { signOut } from "firebase/auth";
+import { config } from "../config";
 
 function TransactionsTestPage({ user }: { user: any }) {
   const [transactions, setTransactions] = useState<any[]>();
 
   async function getTransactions() {
     var result;
-    const data = await fetch("https://api-ashen.benjs.uk/transactions", {
+    const data = await fetch(config.apiUrl + "/transactions", {
       headers: {
         Authorization: "Bearer " + (await user?.getIdToken()),
       },
@@ -25,7 +26,7 @@ function TransactionsTestPage({ user }: { user: any }) {
     category: string,
     direction: string,
   ) {
-    await fetch("https://api-ashen.benjs.uk/transactions", {
+    await fetch(config.apiUrl + "/transactions", {
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + (await user?.getIdToken()),
@@ -43,7 +44,7 @@ function TransactionsTestPage({ user }: { user: any }) {
 
   function transactionDisplay(trsn: any) {
     return (
-      <>
+      <div key={trsn.transactionID}>
         <Card shadow="sm" withBorder>
           <Stack>
             <Title ta="center" order={3}>
@@ -53,12 +54,17 @@ function TransactionsTestPage({ user }: { user: any }) {
             <Text>ID: {trsn.transactionID}</Text>
           </Stack>
         </Card>
-      </>
+      </div>
     );
   }
+
+  useEffect(() => {
+    getTransactions();
+  }, []);
+
   return (
     <Stack>
-      <Title>{user?.email}</Title>
+      <Title order={2}>{user?.email}</Title>
       <List>
         <List.Item>UID: {user?.uid}</List.Item>
         <List.Item>Name: {user?.displayName}</List.Item>
@@ -70,7 +76,7 @@ function TransactionsTestPage({ user }: { user: any }) {
       >
         Pull Transactions
       </Button>
-      <List>
+      <List style={{height:"18em", overflow:"scroll", padding:"1.5em"}}>
         {transactions?.map((transaction) => transactionDisplay(transaction))}
       </List>
       <Button

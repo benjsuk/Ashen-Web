@@ -1,4 +1,4 @@
-import { Button, Group, PasswordInput, TextInput } from "@mantine/core";
+import { Button, Center, Group, PasswordInput, Space, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
   createUserWithEmailAndPassword,
@@ -14,7 +14,6 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
   const [signingUp, setSigningUp] = useState<boolean>();
 
   const form = useForm({
-    mode: "uncontrolled",
     initialValues: {
       email: "",
       password: "",
@@ -28,7 +27,6 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
   });
 
   const signUpForm = useForm({
-    mode: "uncontrolled",
     initialValues: {
       name: "",
       email: "",
@@ -78,8 +76,8 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
         setLoading(false);
       } catch (e) {
         setLoading(false);
+        console.log("Sign-in error:", e);
         form.setErrors({ password: "Incorrect Email or Password" });
-        console.log(form.errors);
       }
     }
   }
@@ -94,85 +92,90 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
     }
   }
 
-  return signingUp ? (
-    <form onSubmit={signUpForm.onSubmit((values) => signUp(values))}>
-      <TextInput
-        withAsterisk
-        label="Your Name"
-        placeholder="John Smith"
-        key={signUpForm.key("name")}
-        {...signUpForm.getInputProps("name")}
-      />
-      <TextInput
-        withAsterisk
-        label="Email"
-        placeholder="your@email.com"
-        key={signUpForm.key("email")}
-        {...signUpForm.getInputProps("email")}
-      />
-      <TextInput
-        withAsterisk
-        label="Confirm Email"
-        placeholder="your@email.com"
-        key={signUpForm.key("confemail")}
-        {...signUpForm.getInputProps("confemail")}
-      />
-      <PasswordInput
-        withAsterisk
-        label="Password"
-        key={signUpForm.key("password")}
-        {...signUpForm.getInputProps("password")}
-      />
+  return (<Center w="100%">
+    <div style={{width:"25em"}}>
+      {signingUp ? (
+        <form onSubmit={signUpForm.onSubmit((values) => signUp(values))}>
+          <TextInput
+            withAsterisk
+            label="Your Name"
+            placeholder="John Smith"
+            key={signUpForm.key("name")}
+            {...signUpForm.getInputProps("name")}
+          />
+          <TextInput
+            withAsterisk
+            label="Email"
+            placeholder="your@email.com"
+            key={signUpForm.key("email")}
+            {...signUpForm.getInputProps("email")}
+          />
+          <TextInput
+            withAsterisk
+            label="Confirm Email"
+            placeholder="your@email.com"
+            key={signUpForm.key("confemail")}
+            {...signUpForm.getInputProps("confemail")}
+          />
+          <PasswordInput
+            withAsterisk
+            label="Password"
+            key={signUpForm.key("password")}
+            {...signUpForm.getInputProps("password")}
+          />
 
-      <Group justify="space-between" mt="md" maw="100%">
-        <Button w="45%" onClick={() => setSigningUp(false)}>
-          Log In
-        </Button>
-        <Button w="45%" type="submit">
-          Submit
-        </Button>
-      </Group>
+          <Group justify="space-between" mt="md">
+            <Button onClick={() => setSigningUp(false)} variant="subtle">
+              Log In
+            </Button>
+            <Button type="submit">Register</Button>
+          </Group>
+          <Space h="xl" />
+          <Button
+            fullWidth
+            leftSection={<GoogleLogo />}
+            variant="outline"
+            radius="xl"
+            onClick={signInWithGoogle}
+          >
+            Sign in with Google
+          </Button>
+        </form>
+      ) : (
+        <form onSubmit={form.onSubmit((values) => signIn("E&P", values))}>
+          <TextInput
+            withAsterisk
+            label="Email"
+            placeholder="your@email.com"
+            key={form.key("email")}
+            {...form.getInputProps("email")}
+          />
+          <PasswordInput
+            withAsterisk
+            label="Password"
+            key={form.key("password")}
+            {...form.getInputProps("password")}
+          />
 
-      <Button
-        fullWidth
-        leftSection={<GoogleLogo />}
-        variant="outline"
-        mt="sm"
-        onClick={signInWithGoogle}
-      >
-        Sign up with Google
-      </Button>
-    </form>
-  ) : (
-    <form onSubmit={form.onSubmit((values) => signIn("E&P", values))}>
-      <TextInput
-        withAsterisk
-        label="Email"
-        placeholder="your@email.com"
-        key={form.key("email")}
-        {...form.getInputProps("email")}
-      />
-      <PasswordInput
-        withAsterisk
-        label="Password"
-        key={form.key("password")}
-        {...form.getInputProps("password")}
-      />
-
-      <Group justify="space-between" mt="md">
-        <Button onClick={() => setSigningUp(true)}>Sign Up</Button>
-        <Button type="submit">Submit</Button>
-      </Group>
-      <Button
-        fullWidth
-        leftSection={<GoogleLogo />}
-        variant="outline"
-        mt="sm"
-        onClick={signInWithGoogle}
-      >
-        Sign in with Google
-      </Button>
-    </form>
+          <Group justify="space-between" mt="md">
+            <Button onClick={() => setSigningUp(true)} variant="subtle">
+              Register
+            </Button>
+            <Button type="submit">Log In</Button>
+          </Group>
+          <Space h="xl" />
+          <Button
+            fullWidth
+            leftSection={<GoogleLogo />}
+            variant="outline"
+            radius="xl"
+            onClick={signInWithGoogle}
+          >
+            Sign in with Google
+          </Button>
+        </form>
+      )}
+    </div></Center>
   );
 }
 

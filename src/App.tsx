@@ -1,4 +1,4 @@
-import { Center, Loader } from "@mantine/core";
+import { Center, Loader, Space, Stack, Title } from "@mantine/core";
 import "./App.css";
 import "@mantine/core/styles.css";
 import { useEffect, useState } from "react";
@@ -29,12 +29,14 @@ function App() {
   }
 
   return (
-    <Center h="100vh">
+    <Center h="100vh"><Stack maw="90vw" w="50em">
+      <Title ta="center" style={{fontSize:"3em"}}>Ashen</Title>
+      <Space h="lg"/>
       {user?.email == undefined ? (
         <LoginPage setLoading={setLoading} />
       ) : (
         <TransactionsTestPage user={user} />
-      )}
+      )}</Stack>
     </Center>
   );
 }
