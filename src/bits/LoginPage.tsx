@@ -95,22 +95,20 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
   }
 
   async function signInWithGoogle() {
-    setLoading(true);
     try {
       await signInWithPopup(auth, new GoogleAuthProvider());
     } catch (e) {
-      setLoading(false);
       console.log(e);
+    } finally {
     }
   }
 
   async function signInWithApple() {
-    setLoading(true);
     try {
       await signInWithPopup(auth, appleProvider);
     } catch (e) {
-      setLoading(false);
       console.log(e);
+    } finally {
     }
   }
 

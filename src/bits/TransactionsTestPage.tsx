@@ -40,6 +40,7 @@ function TransactionsTestPage({ user }: { user: any }) {
         direction: direction,
       }),
     });
+    await getTransactions();
   }
 
   function transactionDisplay(trsn: any) {
