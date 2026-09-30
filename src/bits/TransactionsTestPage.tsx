@@ -3,7 +3,7 @@ import { useState } from "react";
 import { auth } from "../firebaseClient";
 import { signOut } from "firebase/auth";
 
-function TransactionsTestPage({user}: {user: any}) {
+function TransactionsTestPage({ user }: { user: any }) {
   const [transactions, setTransactions] = useState<any[]>();
 
   async function getTransactions() {
