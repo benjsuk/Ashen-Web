@@ -1,10 +1,10 @@
-.signInApple{
-    --button-color: black !important;
-    --button-bd: calc(0.0625rem * var(--mantine-scale)) solid black !important;
+.signInApple {
+  --button-color: black !important;
+  --button-bd: calc(0.0625rem * var(--mantine-scale)) solid black !important;
 }
 
 .signInApple:hover {
-    /*--button-color: white !important;*/
-    background-color: white !important;
-    filter:invert();
+  /*--button-color: white !important;*/
+  background-color: white !important;
+  filter: invert();
 }

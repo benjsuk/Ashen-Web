@@ -3,7 +3,8 @@ function AppleLogo() {
     <div style={{ paddingLeft: "0.8em" }}>
       <svg
         height="1.5em"
-        width="1.5em"  viewBox="0 0 814 1000"
+        width="1.5em"
+        viewBox="0 0 814 1000"
         xmlns="http://www.w3.org/2000/svg"
         xmlSpace="preserve"
       >
