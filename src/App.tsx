@@ -31,7 +31,7 @@ function App() {
   return (
     <Center h="100vh">
       <Stack maw="90vw" w="50em">
-        <Title ta="center" style={{ fontSize: "3em", userSelect:"none" }}>
+        <Title ta="center" style={{ fontSize: "3em", userSelect: "none" }}>
           Ashen
         </Title>
         <Space h="lg" />
