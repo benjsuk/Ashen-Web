@@ -6,6 +6,8 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [react(), babel({ presets: [reactCompilerPreset()] })],
   server: {
-    allowedHosts: ["term.divergence.live"],
+    allowedHosts: ["term.divergence.live"], headers: {
+    "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+  },
   },
 });
