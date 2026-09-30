@@ -3,10 +3,13 @@ import { useForm } from "@mantine/form";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signInWithPopup,
   updateProfile,
+  GoogleAuthProvider,
 } from "firebase/auth";
 import { useState } from "react";
 import { auth } from "../firebaseClient";
+import GoogleLogo from "./GoogleLogo";
 function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
   const [signingUp, setSigningUp] = useState<boolean>();
 
@@ -81,6 +84,16 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
     }
   }
 
+  async function signInWithGoogle() {
+    setLoading(true);
+    try {
+      await signInWithPopup(auth, new GoogleAuthProvider());
+    } catch (e) {
+      setLoading(false);
+      console.log(e);
+    }
+  }
+
   return signingUp ? (
     <form onSubmit={signUpForm.onSubmit((values) => signUp(values))}>
       <TextInput
@@ -119,6 +132,16 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
           Submit
         </Button>
       </Group>
+
+      <Button
+        fullWidth
+        leftSection={<GoogleLogo />}
+        variant="outline"
+        mt="sm"
+        onClick={signInWithGoogle}
+      >
+        Sign up with Google
+      </Button>
     </form>
   ) : (
     <form onSubmit={form.onSubmit((values) => signIn("E&P", values))}>
@@ -140,6 +163,15 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
         <Button onClick={() => setSigningUp(true)}>Sign Up</Button>
         <Button type="submit">Submit</Button>
       </Group>
+      <Button
+        fullWidth
+        leftSection={<GoogleLogo />}
+        variant="outline"
+        mt="sm"
+        onClick={signInWithGoogle}
+      >
+        Sign in with Google
+      </Button>
     </form>
   );
 }
