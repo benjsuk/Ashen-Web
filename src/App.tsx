@@ -1,16 +1,11 @@
-import {
-  Center,
-  Loader,
-} from "@mantine/core";
+import { Center, Loader } from "@mantine/core";
 import "./App.css";
 import "@mantine/core/styles.css";
 import { useEffect, useState } from "react";
-import {
-  onAuthStateChanged,
-} from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { auth } from "./firebaseClient";
-import LoginPage from "./bits/LoginPage"
+import LoginPage from "./bits/LoginPage";
 import TransactionsTestPage from "./bits/TransactionsTestPage";
 
 function App() {
@@ -36,9 +31,9 @@ function App() {
   return (
     <Center h="100vh">
       {user?.email == undefined ? (
-        <LoginPage setLoading={setLoading}/>
+        <LoginPage setLoading={setLoading} />
       ) : (
-        <TransactionsTestPage user={user}/>
+        <TransactionsTestPage user={user} />
       )}
     </Center>
   );

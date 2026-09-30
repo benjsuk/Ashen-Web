@@ -1,82 +1,85 @@
 import { Button, Group, PasswordInput, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { useState } from "react";
 import { auth } from "../firebaseClient";
 function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
+  const [signingUp, setSigningUp] = useState<boolean>();
 
-const [signingUp, setSigningUp] = useState<boolean>();
+  const form = useForm({
+    mode: "uncontrolled",
+    initialValues: {
+      email: "",
+      password: "",
+    },
 
-const form = useForm({
-  mode: "uncontrolled",
-  initialValues: {
-    email: "",
-    password: "",
-  },
+    validate: {
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
+      password: (value) =>
+        /^(?=.*\d).{6,}$/.test(value) ? null : "Invalid password",
+    },
+  });
 
-  validate: {
-    email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-    password: (value) =>
-      /^(?=.*\d).{6,}$/.test(value) ? null : "Invalid password",
-  },
-});
+  const signUpForm = useForm({
+    mode: "uncontrolled",
+    initialValues: {
+      name: "",
+      email: "",
+      confemail: "",
+      password: "",
+    },
 
-const signUpForm = useForm({
-  mode: "uncontrolled",
-  initialValues: {
-    name: "",
-    email: "",
-    confemail: "",
-    password: "",
-  },
+    validate: {
+      name: (value) => (value != "" ? null : "Enter name"),
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
+      confemail: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
+      password: (value) =>
+        /^(?=.*\d).{6,}$/.test(value) ? null : "Invalid password",
+    },
+  });
 
-  validate: {
-    name: (value) => (value != "" ? null : "Enter name"),
-    email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-    confemail: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-    password: (value) =>
-      /^(?=.*\d).{6,}$/.test(value) ? null : "Invalid password",
-  },
-});
+  async function signUp(values: any) {
+    setLoading(true);
+    if (values.email.toString() != values.confemail.toString()) {
+      signUpForm.setErrors({
+        email: "Emails must match",
+        confemail: "Emails must match",
+      });
+      return;
+    } else {
+      console.log(values);
+    }
 
-async function signUp(values: any) {
-  setLoading(true);
-  if (values.email.toString() != values.confemail.toString()) {
-    signUpForm.setErrors({
-      email: "Emails must match",
-      confemail: "Emails must match",
-    });
-    return;
-  } else {
-    console.log(values);
-  }
-
-  try {
-    const cred = await createUserWithEmailAndPassword(
-      auth,
-      values.email,
-      values.password,
-    );
-    await updateProfile(cred.user, { displayName: values.name });
-  } catch (e) {
-    setLoading(false);
-    signUpForm.setErrors({ password: "There was an error." });
-  }
-}
-
-async function signIn(method: string, values: any) {
-  setLoading(true);
-  if (method == "E&P") {
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
-      setLoading(false);
+      const cred = await createUserWithEmailAndPassword(
+        auth,
+        values.email,
+        values.password,
+      );
+      await updateProfile(cred.user, { displayName: values.name });
     } catch (e) {
       setLoading(false);
-      form.setErrors({ password: "Incorrect Email or Password" });
-      console.log(form.errors);
+      signUpForm.setErrors({ password: "There was an error." });
     }
   }
-}
+
+  async function signIn(method: string, values: any) {
+    setLoading(true);
+    if (method == "E&P") {
+      try {
+        await signInWithEmailAndPassword(auth, values.email, values.password);
+        setLoading(false);
+      } catch (e) {
+        setLoading(false);
+        form.setErrors({ password: "Incorrect Email or Password" });
+        console.log(form.errors);
+      }
+    }
+  }
 
   return signingUp ? (
     <form onSubmit={signUpForm.onSubmit((values) => signUp(values))}>
