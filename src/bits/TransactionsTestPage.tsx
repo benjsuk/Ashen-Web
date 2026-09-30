@@ -76,7 +76,7 @@ function TransactionsTestPage({ user }: { user: any }) {
       >
         Pull Transactions
       </Button>
-      <List style={{height:"18em", overflow:"scroll", padding:"1.5em"}}>
+      <List style={{ height: "18em", overflow: "scroll", padding: "1.5em" }}>
         {transactions?.map((transaction) => transactionDisplay(transaction))}
       </List>
       <Button

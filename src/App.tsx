@@ -29,14 +29,18 @@ function App() {
   }
 
   return (
-    <Center h="100vh"><Stack maw="90vw" w="50em">
-      <Title ta="center" style={{fontSize:"3em"}}>Ashen</Title>
-      <Space h="lg"/>
-      {user?.email == undefined ? (
-        <LoginPage setLoading={setLoading} />
-      ) : (
-        <TransactionsTestPage user={user} />
-      )}</Stack>
+    <Center h="100vh">
+      <Stack maw="90vw" w="50em">
+        <Title ta="center" style={{ fontSize: "3em" }}>
+          Ashen
+        </Title>
+        <Space h="lg" />
+        {user?.email == undefined ? (
+          <LoginPage setLoading={setLoading} />
+        ) : (
+          <TransactionsTestPage user={user} />
+        )}
+      </Stack>
     </Center>
   );
 }
