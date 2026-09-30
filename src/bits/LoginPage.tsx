@@ -13,10 +13,15 @@ import {
   signInWithPopup,
   updateProfile,
   GoogleAuthProvider,
+  OAuthProvider
 } from "firebase/auth";
 import { useState } from "react";
 import { auth } from "../firebaseClient";
 import GoogleLogo from "./GoogleLogo";
+import AppleLogo from "./AppleLogo";
+
+const appleProvider = new OAuthProvider('apple.com');
+
 function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
   const [signingUp, setSigningUp] = useState<boolean>();
 
@@ -99,6 +104,16 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
     }
   }
 
+    async function signInWithApple() {
+    setLoading(true);
+    try {
+      await signInWithPopup(auth,  appleProvider);
+    } catch (e) {
+      setLoading(false);
+      console.log(e);
+    }
+  }
+
   return (
     <Center w="100%">
       <div style={{ width: "25em" }}>
@@ -147,6 +162,17 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
               onClick={signInWithGoogle}
             >
               Sign in with Google
+            </Button><Space h="sm"/>
+             <Button
+              fullWidth
+              leftSection={<AppleLogo />}
+              variant="outline"
+              radius="xl"
+              onClick={signInWithApple}
+              className="signInApple"
+              
+            >
+              Sign in with Apple
             </Button>
           </form>
         ) : (
@@ -180,6 +206,18 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
               onClick={signInWithGoogle}
             >
               Sign in with Google
+            </Button>
+            <Space h="sm"/>
+             <Button
+              fullWidth
+              leftSection={<AppleLogo />}
+              variant="outline"
+              radius="xl"
+              onClick={signInWithApple}
+              className="signInApple"
+
+            >
+              Sign in with Apple
             </Button>
           </form>
         )}
