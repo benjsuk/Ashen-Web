@@ -1,8 +1,21 @@
-import { Button, Card, Image, List, Stack, Text, Title } from "@mantine/core";
+import {
+  Badge,
+  Button,
+  Card,
+  Group,
+  Image,
+  List,
+  Space,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { useEffect, useState } from "react";
 import { auth } from "../firebaseClient";
 import { signOut } from "firebase/auth";
 import { config } from "../config";
+import { generate as randomWord } from "random-words";
+import { FaPen, FaTrash } from "react-icons/fa";
 
 function TransactionsTestPage({ user }: { user: any }) {
   const [transactions, setTransactions] = useState<any[]>();
@@ -45,16 +58,64 @@ function TransactionsTestPage({ user }: { user: any }) {
 
   function transactionDisplay(trsn: any) {
     return (
-      <div key={trsn.transactionID}>
-        <Card shadow="sm" withBorder>
-          <Stack>
-            <Title ta="center" order={3}>
-              {trsn.description} • {trsn.direction == "income" ? "" : "-"}£
-              {(trsn.amount / 100).toFixed(2)}
-            </Title>
-            <Text>ID: {trsn.transactionID}</Text>
-          </Stack>
-        </Card>
+      <div key={trsn.transactionID} style={{ margin: "0.5em" }}>
+        <Group w="100%" gap={0}>
+          <Card
+            shadow="sm"
+            withBorder
+            style={{
+              backgroundColor:
+                trsn.direction == "income" ? "rgb(215, 240, 215)" : "",
+            }}
+            w="100%"
+            flex={1}
+            m='xs'
+          >
+            <Group w="100%">
+              <Title ta="center" order={3}>
+                {trsn.description}
+              </Title>
+              <Badge color="lightgrey" radius="sm" style={{ color: "#555" }}>
+                {trsn.category}
+              </Badge>
+
+              <Title
+                style={{
+                  marginLeft: "auto",
+                  color: trsn.direction == "income" ? "rgb(21, 185, 21)" : "darkred",
+                }}
+                order={4}
+              >
+                {trsn.direction == "income" ? "+" : ""}£
+                {(trsn.amount / 100).toFixed(2)}
+              </Title>
+            </Group>
+          </Card>
+          <Card
+            shadow="sm"
+            withBorder
+            style={{
+              backgroundColor: "#98eeff",
+              padding:"0.75em"
+            }}
+            className="hovershadow"
+            m='xs'
+          >
+            <FaPen color="#009bba"/>
+          </Card>
+           <Card
+            shadow="sm"
+            withBorder
+            style={{
+              backgroundColor: "#ff9898",
+              padding:"0.75em"
+            }}
+            className="hovershadow"
+            m='xs'
+          >
+            <FaTrash color="#ba0000"/>
+          </Card>
+        </Group>
       </div>
     );
   }
@@ -77,17 +138,22 @@ function TransactionsTestPage({ user }: { user: any }) {
       >
         Pull Transactions
       </Button>
-      <List style={{ height: "18em", overflow: "scroll", padding: "1.5em" }}>
+      <List style={{ height: "50vh", overflow: "scroll", padding: "1.5em" }}>
         {transactions?.map((transaction) => transactionDisplay(transaction))}
       </List>
       <Button
         onClick={async () => {
           makeTransaction(
             Math.floor(Math.random() * 10000),
-            "TEST",
+            randomWord(Math.floor(Math.random() * 5))
+              .toString()
+              .replace("[", "")
+              .replace("]", "")
+              .replace('"', "")
+              .replaceAll(",", " "),
             new Date(),
             "TEST",
-            Math.floor(Math.random() * 100) > 50 ? "expense" : "income",
+            Math.floor(Math.random() * 100) > 20 ? "expense" : "income",
           );
         }}
       >

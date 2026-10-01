@@ -1,4 +1,12 @@
-import { Center, Loader, Space, Stack, Title } from "@mantine/core";
+import {
+  Center,
+  Loader,
+  Space,
+  Stack,
+  Text,
+  Title,
+  Tooltip,
+} from "@mantine/core";
 import "./App.css";
 import "@mantine/core/styles.css";
 import { useEffect, useState } from "react";
@@ -7,6 +15,7 @@ import type { User } from "firebase/auth";
 import { auth } from "./firebaseClient";
 import LoginPage from "./bits/LoginPage";
 import TransactionsTestPage from "./bits/TransactionsTestPage";
+import pkg from "../package.json";
 
 function App() {
   const [user, setUser] = useState<User>();
@@ -41,6 +50,22 @@ function App() {
           <TransactionsTestPage user={user} />
         )}
       </Stack>
+
+      <Title
+        style={{
+          position: "absolute",
+          bottom: "1em",
+          right: "1em",
+          userSelect: "none",
+        }}
+        onClick={() => {
+          navigator.clipboard.writeText(pkg.version);
+        }}
+        order={4}
+      >
+        v{pkg.version}{" "}
+      </Title>
+      
     </Center>
   );
 }
