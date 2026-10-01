@@ -69,7 +69,7 @@ function TransactionsTestPage({ user }: { user: any }) {
             }}
             w="100%"
             flex={1}
-            m='xs'
+            m="xs"
           >
             <Group w="100%">
               <Title ta="center" order={3}>
@@ -82,7 +82,8 @@ function TransactionsTestPage({ user }: { user: any }) {
               <Title
                 style={{
                   marginLeft: "auto",
-                  color: trsn.direction == "income" ? "rgb(21, 185, 21)" : "darkred",
+                  color:
+                    trsn.direction == "income" ? "rgb(21, 185, 21)" : "darkred",
                 }}
                 order={4}
               >
@@ -96,24 +97,24 @@ function TransactionsTestPage({ user }: { user: any }) {
             withBorder
             style={{
               backgroundColor: "#98eeff",
-              padding:"0.75em"
+              padding: "0.75em",
             }}
             className="hovershadow"
-            m='xs'
+            m="xs"
           >
-            <FaPen color="#009bba"/>
+            <FaPen color="#009bba" />
           </Card>
-           <Card
+          <Card
             shadow="sm"
             withBorder
             style={{
               backgroundColor: "#ff9898",
-              padding:"0.75em"
+              padding: "0.75em",
             }}
             className="hovershadow"
-            m='xs'
+            m="xs"
           >
-            <FaTrash color="#ba0000"/>
+            <FaTrash color="#ba0000" />
           </Card>
         </Group>
       </div>

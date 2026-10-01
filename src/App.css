@@ -9,18 +9,18 @@
   background-color: #aaa !important;
   filter: invert();
 }
-.hovershadow{
+.hovershadow {
   transition: all 0.3s;
   opacity: 0.7;
 }
-.hovershadow:hover{
-box-shadow: 0px 4px 10px 0px rgba(0,0,0,0.2);
-transform: translateY(-3px);
-cursor: pointer;
+.hovershadow:hover {
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
+  cursor: pointer;
 }
-.hovershadow:active{
-box-shadow: 0px 4px 10px 0px rgba(0,0,0,0.0);
-transform: translateY(3px);
-cursor: pointer;
-opacity: 1;
+.hovershadow:active {
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0);
+  transform: translateY(3px);
+  cursor: pointer;
+  opacity: 1;
 }

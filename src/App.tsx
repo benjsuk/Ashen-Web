@@ -65,7 +65,6 @@ function App() {
       >
         v{pkg.version}{" "}
       </Title>
-      
     </Center>
   );
 }
