@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   Badge,
   Button,
   Card,
@@ -54,11 +55,42 @@ function TransactionsTestPage({ user }: { user: any }) {
       }),
     });
     await getTransactions();
+    const transactionDivs =
+      await document.getElementsByClassName("transaction");
+    for (let index = 0; index < transactionDivs.length; index++) {
+      const element = transactionDivs[index];
+      console.log(element.className.replace("transaction ", ""));
+    }
+  }
+
+  async function deleteTransaction(id: string) {
+    await fetch(config.apiUrl + "/transactions", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + (await user?.getIdToken()),
+      },
+      method: "POST",
+      body: JSON.stringify({
+        delete: true,
+        id: id,
+      }),
+    });
+    await getTransactions();
+    const transactionDivs =
+      await document.getElementsByClassName("transaction");
+    for (let index = 0; index < transactionDivs.length; index++) {
+      const element = transactionDivs[index];
+      console.log(element.className.replace("transaction ", ""));
+    }
   }
 
   function transactionDisplay(trsn: any) {
     return (
-      <div key={trsn.transactionID} style={{ margin: "0.5em" }}>
+      <div
+        key={trsn.transactionID}
+        className={"transaction " + trsn.transactionID}
+        style={{ margin: "0.5em" }}
+      >
         <Group w="100%" gap={0}>
           <Card
             shadow="sm"
@@ -93,28 +125,37 @@ function TransactionsTestPage({ user }: { user: any }) {
             </Group>
           </Card>
           <Card
-            shadow="sm"
+            radius="md"
             withBorder
-            style={{
-              backgroundColor: "#98eeff",
-              padding: "0.75em",
-            }}
-            className="hovershadow"
-            m="xs"
+            style={{ padding: 0, transform: "scale(0.95)" }}
           >
-            <FaPen color="#009bba" />
-          </Card>
-          <Card
-            shadow="sm"
-            withBorder
-            style={{
-              backgroundColor: "#ff9898",
-              padding: "0.75em",
-            }}
-            className="hovershadow"
-            m="xs"
-          >
-            <FaTrash color="#ba0000" />
+            <Group gap="0">
+              <ActionIcon
+                style={{
+                  backgroundColor: "#98eeff",
+                  padding: "0.75em",
+                }}
+                className="hovershadow"
+                m="0"
+                radius={0}size='xl'
+              >
+                <FaPen color="#009bba" />
+              </ActionIcon>
+              <ActionIcon
+                style={{
+                  backgroundColor: "#ff9898",
+                  padding: "0.75em",
+                }}
+                className="hovershadow"
+                m="0"
+                radius={0}
+                onClick={() => {
+                  deleteTransaction(trsn.transactionID);
+                }} size='xl'
+              >
+                <FaTrash color="#ba0000" />
+              </ActionIcon>
+            </Group>
           </Card>
         </Group>
       </div>
@@ -146,12 +187,13 @@ function TransactionsTestPage({ user }: { user: any }) {
         onClick={async () => {
           makeTransaction(
             Math.floor(Math.random() * 10000),
-            randomWord(Math.floor(Math.random() * 5))
-              .toString()
-              .replace("[", "")
-              .replace("]", "")
-              .replace('"', "")
-              .replaceAll(",", " "),
+            "TEST" +
+              randomWord(Math.floor(Math.random() * 5))
+                .toString()
+                .replace("[", "")
+                .replace("]", "")
+                .replace('"', "")
+                .replaceAll(",", " "),
             new Date(),
             "TEST",
             Math.floor(Math.random() * 100) > 20 ? "expense" : "income",

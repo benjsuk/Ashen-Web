@@ -63,7 +63,7 @@ function App() {
         }}
         order={4}
       >
-        v{pkg.version}{" "}
+        v{pkg.version}
       </Title>
     </Center>
   );
