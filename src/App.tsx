@@ -1,10 +1,4 @@
-import {
-  Center,
-  Loader,
-  Space,
-  Stack,
-  Title,
-} from "@mantine/core";
+import { Center, Loader, Space, Stack, Title } from "@mantine/core";
 import "./App.css";
 import "@mantine/core/styles.css";
 import { useEffect, useState } from "react";
