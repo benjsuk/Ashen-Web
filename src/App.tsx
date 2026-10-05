@@ -3,9 +3,7 @@ import {
   Loader,
   Space,
   Stack,
-  Text,
   Title,
-  Tooltip,
 } from "@mantine/core";
 import "./App.css";
 import "@mantine/core/styles.css";
