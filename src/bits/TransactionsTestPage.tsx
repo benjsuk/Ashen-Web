@@ -55,8 +55,7 @@ function TransactionsTestPage({ user }: { user: any }) {
       }),
     });
     await getTransactions();
-    const transactionDivs =
-      await document.getElementsByClassName("transaction");
+    const transactionDivs = document.getElementsByClassName("transaction");
     for (let index = 0; index < transactionDivs.length; index++) {
       const element = transactionDivs[index];
       console.log(element.className.replace("transaction ", ""));
@@ -64,6 +63,11 @@ function TransactionsTestPage({ user }: { user: any }) {
   }
 
   async function deleteTransaction(id: string) {
+    const transactionDivs = document.getElementsByClassName("transaction");
+    for (let index = 0; index < transactionDivs.length; index++) {
+      const element = transactionDivs[index] as HTMLElement;
+      if (element.className.replace("transaction ", "") == id) element.style.display = "none"
+    }
     await fetch(config.apiUrl + "/transactions", {
       headers: {
         "Content-Type": "application/json",
@@ -76,12 +80,6 @@ function TransactionsTestPage({ user }: { user: any }) {
       }),
     });
     await getTransactions();
-    const transactionDivs =
-      await document.getElementsByClassName("transaction");
-    for (let index = 0; index < transactionDivs.length; index++) {
-      const element = transactionDivs[index];
-      console.log(element.className.replace("transaction ", ""));
-    }
   }
 
   function transactionDisplay(trsn: any) {
@@ -190,12 +188,12 @@ function TransactionsTestPage({ user }: { user: any }) {
           makeTransaction(
             Math.floor(Math.random() * 10000),
             "TEST" +
-              randomWord(Math.floor(Math.random() * 5))
-                .toString()
-                .replace("[", "")
-                .replace("]", "")
-                .replace('"', "")
-                .replaceAll(",", " "),
+            randomWord(Math.floor(Math.random() * 5))
+              .toString()
+              .replace("[", "")
+              .replace("]", "")
+              .replace('"', "")
+              .replaceAll(",", " "),
             new Date(),
             "TEST",
             Math.floor(Math.random() * 100) > 20 ? "expense" : "income",
