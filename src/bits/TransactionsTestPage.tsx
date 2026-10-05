@@ -137,7 +137,8 @@ function TransactionsTestPage({ user }: { user: any }) {
                 }}
                 className="hovershadow"
                 m="0"
-                radius={0}size='xl'
+                radius={0}
+                size="xl"
               >
                 <FaPen color="#009bba" />
               </ActionIcon>
@@ -151,7 +152,8 @@ function TransactionsTestPage({ user }: { user: any }) {
                 radius={0}
                 onClick={() => {
                   deleteTransaction(trsn.transactionID);
-                }} size='xl'
+                }}
+                size="xl"
               >
                 <FaTrash color="#ba0000" />
               </ActionIcon>
