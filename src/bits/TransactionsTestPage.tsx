@@ -13,8 +13,8 @@ import { auth } from "../firebaseClient";
 import { signOut } from "firebase/auth";
 import { config } from "../config";
 import { generate as randomWord } from "random-words";
-import { FaPen, FaTrash } from "react-icons/fa";
-import { util } from "../util";
+import { FaPen, FaTrashCan } from "react-icons/fa6";
+import { IoMdTrash } from "react-icons/io";
 
 function TransactionsTestPage({ user }: { user: any }) {
   const [transactions, setTransactions] = useState<any[]>();
@@ -152,7 +152,7 @@ function TransactionsTestPage({ user }: { user: any }) {
                 }}
                 size="xl"
               >
-                <FaTrash color="#ba0000" />
+                <IoMdTrash color="#ba0000" />
               </ActionIcon>
             </Group>
           </Card>
