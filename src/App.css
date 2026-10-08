@@ -41,12 +41,12 @@
 .trsnedit {
   transition: all 0.5s ease;
   max-width: 6em;
-  height:2.5em;
+  height: 2.5em;
   overflow: visible;
   min-width: 0;
   flex-shrink: 1;
   flex-direction: row;
-  opacity:1;
+  opacity: 1;
   background-color: #ff9898 !important;
 }
 

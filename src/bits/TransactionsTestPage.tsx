@@ -91,12 +91,17 @@ function TransactionsTestPage({ user }: { user: any }) {
         style={{ margin: "0.5em" }}
       >
         <Group w="100%" gap={0}>
-          <Checkbox checked={(checkboxes[trsn.transactionID] || false)} onChange={() => {
-            setCheckboxes({
-              ...checkboxes,
-              [trsn.transactionID]: !(checkboxes[trsn.transactionID] || false),
-            });
-          }} />
+          <Checkbox
+            checked={checkboxes[trsn.transactionID] || false}
+            onChange={() => {
+              setCheckboxes({
+                ...checkboxes,
+                [trsn.transactionID]: !(
+                  checkboxes[trsn.transactionID] || false
+                ),
+              });
+            }}
+          />
           <Card
             shadow="sm"
             withBorder
@@ -109,7 +114,16 @@ function TransactionsTestPage({ user }: { user: any }) {
             m="xs"
           >
             <Group w="100%">
-              <Title ta="center" order={3} maw="60%" style={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>
+              <Title
+                ta="center"
+                order={3}
+                maw="60%"
+                style={{
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                }}
+              >
                 {trsn.description}
               </Title>
               <Badge color="lightgrey" radius="sm" style={{ color: "#555" }}>
@@ -173,7 +187,6 @@ function TransactionsTestPage({ user }: { user: any }) {
 
   useEffect(() => {
     getTransactions();
-
   }, []);
 
   useEffect(() => {
@@ -182,13 +195,13 @@ function TransactionsTestPage({ user }: { user: any }) {
       const itemboxes = document.getElementsByClassName("trsnedit");
       for (let index = 0; index < itemboxes.length; index++) {
         console.log(itemboxes[index]);
-        (itemboxes[index] as HTMLElement).classList += " collapsed"
+        (itemboxes[index] as HTMLElement).classList += " collapsed";
       }
     } else {
       const itemboxes = document.getElementsByClassName("trsnedit");
       for (let index = 0; index < itemboxes.length; index++) {
         console.log(itemboxes[index]);
-        (itemboxes[index] as HTMLElement).classList.remove('collapsed')
+        (itemboxes[index] as HTMLElement).classList.remove("collapsed");
       }
     }
   }, [checkboxes]);
@@ -207,21 +220,29 @@ function TransactionsTestPage({ user }: { user: any }) {
       >
         Pull Transactions
       </Button>
-      <Stack style={{ height: "50vh", overflow: "scroll", padding: "1.5em", flexDirection: "column-reverse" }}>
+      <Stack
+        style={{
+          height: "50vh",
+          overflow: "scroll",
+          padding: "1.5em",
+          flexDirection: "column-reverse",
+        }}
+      >
         <div>
-        {transactions?.map((transaction) => transactionDisplay(transaction))}</div>
+          {transactions?.map((transaction) => transactionDisplay(transaction))}
+        </div>
       </Stack>
       <Button
         onClick={async () => {
           makeTransaction(
             Math.floor(Math.random() * 10000),
             "TEST" +
-            randomWord(Math.floor(Math.random() * 5))
-              .toString()
-              .replace("[", "")
-              .replace("]", "")
-              .replace('"', "")
-              .replaceAll(",", " "),
+              randomWord(Math.floor(Math.random() * 5))
+                .toString()
+                .replace("[", "")
+                .replace("]", "")
+                .replace('"', "")
+                .replaceAll(",", " "),
             new Date(),
             "TEST",
             Math.floor(Math.random() * 100) > 20 ? "expense" : "income",
