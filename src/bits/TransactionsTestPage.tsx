@@ -3,9 +3,11 @@ import {
   Badge,
   Button,
   Card,
+  Checkbox,
   Group,
   List,
   Stack,
+  Text,
   Title,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
@@ -18,7 +20,7 @@ import { IoMdTrash } from "react-icons/io";
 
 function TransactionsTestPage({ user }: { user: any }) {
   const [transactions, setTransactions] = useState<any[]>();
-
+  const [checkboxes, setCheckboxes] = useState<Record<string, boolean>>({});
   async function getTransactions() {
     var result;
     const data = await fetch(config.apiUrl + "/transactions", {
@@ -28,7 +30,7 @@ function TransactionsTestPage({ user }: { user: any }) {
     });
     result = await data.json();
     console.log(result);
-    setTransactions(await result);
+    setTransactions(await result.sort((a: any, b: any) => a.date - b.date));
   }
 
   async function makeTransaction(
@@ -89,6 +91,12 @@ function TransactionsTestPage({ user }: { user: any }) {
         style={{ margin: "0.5em" }}
       >
         <Group w="100%" gap={0}>
+          <Checkbox checked={(checkboxes[trsn.transactionID] || false)} onChange={() => {
+            setCheckboxes({
+              ...checkboxes,
+              [trsn.transactionID]: !(checkboxes[trsn.transactionID] || false),
+            });
+          }} />
           <Card
             shadow="sm"
             withBorder
@@ -101,12 +109,13 @@ function TransactionsTestPage({ user }: { user: any }) {
             m="xs"
           >
             <Group w="100%">
-              <Title ta="center" order={3}>
+              <Title ta="center" order={3} maw="60%" style={{ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }}>
                 {trsn.description}
               </Title>
               <Badge color="lightgrey" radius="sm" style={{ color: "#555" }}>
                 {trsn.category}
               </Badge>
+              <Text size="xs">{trsn.date.split("T")[0]}</Text>
 
               <Title
                 style={{
@@ -125,8 +134,9 @@ function TransactionsTestPage({ user }: { user: any }) {
             radius="md"
             withBorder
             style={{ padding: 0, transform: "scale(0.95)" }}
+            className="trsnedit"
           >
-            <Group gap="0">
+            <Group gap="0" align="stretch">
               <ActionIcon
                 style={{
                   backgroundColor: "#98eeff",
@@ -135,9 +145,9 @@ function TransactionsTestPage({ user }: { user: any }) {
                 className="hovershadow"
                 m="0"
                 radius={0}
-                size="xl"
+                size="2.5em"
               >
-                <FaPen color="#009bba" />
+                <FaPen size="2em" color="#009bba" />
               </ActionIcon>
               <ActionIcon
                 style={{
@@ -150,9 +160,9 @@ function TransactionsTestPage({ user }: { user: any }) {
                 onClick={() => {
                   deleteTransaction(trsn.transactionID);
                 }}
-                size="xl"
+                size="2.5em"
               >
-                <IoMdTrash color="#ba0000" />
+                <IoMdTrash size="2em" color="#ba0000" />
               </ActionIcon>
             </Group>
           </Card>
@@ -163,7 +173,25 @@ function TransactionsTestPage({ user }: { user: any }) {
 
   useEffect(() => {
     getTransactions();
+
   }, []);
+
+  useEffect(() => {
+    const any = Object.values(checkboxes).some(Boolean);
+    if (any) {
+      const itemboxes = document.getElementsByClassName("trsnedit");
+      for (let index = 0; index < itemboxes.length; index++) {
+        console.log(itemboxes[index]);
+        (itemboxes[index] as HTMLElement).classList += " collapsed"
+      }
+    } else {
+      const itemboxes = document.getElementsByClassName("trsnedit");
+      for (let index = 0; index < itemboxes.length; index++) {
+        console.log(itemboxes[index]);
+        (itemboxes[index] as HTMLElement).classList.remove('collapsed')
+      }
+    }
+  }, [checkboxes]);
 
   return (
     <Stack>
@@ -179,20 +207,21 @@ function TransactionsTestPage({ user }: { user: any }) {
       >
         Pull Transactions
       </Button>
-      <List style={{ height: "50vh", overflow: "scroll", padding: "1.5em" }}>
-        {transactions?.map((transaction) => transactionDisplay(transaction))}
-      </List>
+      <Stack style={{ height: "50vh", overflow: "scroll", padding: "1.5em", flexDirection: "column-reverse" }}>
+        <div>
+        {transactions?.map((transaction) => transactionDisplay(transaction))}</div>
+      </Stack>
       <Button
         onClick={async () => {
           makeTransaction(
             Math.floor(Math.random() * 10000),
             "TEST" +
-              randomWord(Math.floor(Math.random() * 5))
-                .toString()
-                .replace("[", "")
-                .replace("]", "")
-                .replace('"', "")
-                .replaceAll(",", " "),
+            randomWord(Math.floor(Math.random() * 5))
+              .toString()
+              .replace("[", "")
+              .replace("]", "")
+              .replace('"', "")
+              .replaceAll(",", " "),
             new Date(),
             "TEST",
             Math.floor(Math.random() * 100) > 20 ? "expense" : "income",
