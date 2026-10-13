@@ -183,7 +183,7 @@ const TransactionRow = memo(function TransactionRow({
           aria-label={`Select ${transaction.description}`}
           checked={selected}
           onChange={(event) =>
-            onToggle(transaction.transactionID, event.currentTarget.checked)
+            onToggle(transaction.transactionID, event.target.checked)
           }
         />
         <div

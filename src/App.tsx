@@ -8,6 +8,7 @@ import {
   Stack,
   Text,
   Title,
+  Tooltip,
 } from "@mantine/core";
 import "./App.css";
 import "@mantine/core/styles.css";
@@ -20,6 +21,7 @@ import TransactionsPage from "./bits/TransactionsPage";
 import pkg from "../package.json";
 import "@mantine/dates/styles.css";
 import TransactionsTestPage from "./bits/TransactionsTestPage";
+import { config } from "./config";
 
 function App() {
   const [user, setUser] = useState<User>();
@@ -61,6 +63,7 @@ function App() {
           <TransactionsTestPage user={user} />
         )}
       </Stack>
+      <Tooltip label={"Web Release: " + config.releaseName}>
       <Title
         style={{
           position: "fixed",
@@ -77,7 +80,7 @@ function App() {
         order={4}
       >
         v{pkg.version}
-      </Title>
+      </Title></Tooltip>
       <ComboboxPopover
         data={["Sign Out"]}
         comboboxProps={{ width: 150, position: "bottom-start" }}
