@@ -328,7 +328,8 @@ function TransactionsTestPage({ user }: { user: any }) {
           size="5em"
         >
           <BiPlus size="2em" color="#113" />
-        </ActionIcon><Space w="md" />{" "}
+        </ActionIcon>
+        <Space w="md" />{" "}
         <ActionIcon
           style={{
             backgroundColor: "#9ee2f8",

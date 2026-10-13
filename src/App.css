@@ -135,7 +135,7 @@
 
 .main-avatar:hover {
   filter: brightness(0.98);
-   backdrop-filter: brightness(0.98);
+  backdrop-filter: brightness(0.98);
 }
 
 .main-avatar:active {
