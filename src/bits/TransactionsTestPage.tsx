@@ -5,37 +5,32 @@ import {
   Button,
   Card,
   Center,
-  Checkbox,
   Flex,
   Group,
-  Loader,
   NumberFormatter,
   NumberInput,
   RollingNumber,
   SegmentedControl,
   Space,
   Stack,
-  Text,
   TextInput,
   Title,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import type { User } from "firebase/auth";
 import { config } from "../config";
 import { generate as randomWord } from "random-words";
-import { FaPen } from "react-icons/fa6";
-import { IoMdTrash } from "react-icons/io";
-import { PiSelectionAll } from "react-icons/pi";
-import { GrRefresh } from "react-icons/gr";
-import { BiArrowBack, BiPlus } from "react-icons/bi";
+import { FaArrowLeft } from "react-icons/fa6";
+import { BiPlus } from "react-icons/bi";
 import { useForm } from "@mantine/form";
 import { DatePickerInput } from "@mantine/dates";
 import { CgDebug } from "react-icons/cg";
+import { MdOutlineSelectAll } from "react-icons/md";
 
 function TransactionsTestPage({ user }: { user: any }) {
   const [transactions, setTransactions] = useState<any[]>();
   const [checkboxes, setCheckboxes] = useState<Record<string, boolean>>({});
   const [anyChecked, setAnyChecked] = useState<boolean>(false);
+  const [checkboxShow, setCheckboxShow] = useState<boolean>(false);
   const [addModalShow, setAddModalShow] = useState<boolean>(false);
   const [direction, setDirection] = useState<any>("expense");
   async function getTransactions() {
@@ -236,113 +231,6 @@ function TransactionsTestPage({ user }: { user: any }) {
         </Title>
         <Space h="md" />
         <Flex>
-          {/*<Stack>
-            <Space h="xs" />
-            <ActionIcon
-              style={{
-                backgroundColor: "#ff9898",
-                padding: "0.6em",
-                transition: "all 0.75s ease",
-                opacity: anyChecked ? "1" : "0.3",
-                pointerEvents: anyChecked ? undefined : "none",
-              }}
-              disabled={!anyChecked}
-              className="hovershadow"
-              m="0"
-              onClick={() => {
-                Object.entries(checkboxes)
-                  .filter(([, checked]) => checked)
-                  .forEach(([id]) => deleteTransaction(id));
-                setCheckboxes({});
-                setAnyChecked(false);
-              }}
-              size="2.5em"
-            >
-              <IoMdTrash size="2em" color="#ba0000" />
-            </ActionIcon>
-            <ActionIcon
-              style={{
-                backgroundColor: "#24c210",
-                padding: "0.5em",
-                transition: "all 0.75s ease",
-              }}
-              className="hovershadow"
-              m="0"
-              onClick={() => {
-                const allSelected =
-                  (transactions?.length ?? 0) > 0 &&
-                  transactions!.every((t) => checkboxes[t.transactionID]);
-                const next = Object.fromEntries(
-                  (transactions ?? []).map((t) => [
-                    t.transactionID,
-                    !allSelected,
-                  ]),
-                );
-                setCheckboxes(next);
-              }}
-              size="2.5em"
-            >
-              <PiSelectionAll size="4em" color="#fff" />
-            </ActionIcon>
-            <ActionIcon
-              style={{
-                backgroundColor: "#b8c2d6",
-                padding: "0.6em",
-                transition: "all 0.75s ease",
-              }}
-              className="hovershadow"
-              m="0"
-              onClick={() => {
-                getTransactions();
-              }}
-              size="2.5em"
-            >
-              <GrRefresh size="2em" color="#113" />
-            </ActionIcon>
-            <Space h="md" />
-            <ActionIcon
-              style={{
-                backgroundColor: "#cef89e",
-                padding: "0.5em",
-                transition: "all 0.75s ease",
-              }}
-              className="hovershadow"
-              m="0"
-              onClick={() => {
-                setAddModalShow(true);
-              }}
-              size="2.5em"
-            >
-              <BiPlus size="2em" color="#113" />
-            </ActionIcon>
-            <ActionIcon
-              style={{
-                backgroundColor: "#cef89e",
-                padding: "0.5em",
-                transition: "all 0.75s ease",
-              }}
-              className="hovershadow"
-              m="0"
-              onClick={async () => {
-                makeTransaction(
-                  Math.floor(Math.random() * 10000),
-                  "TEST" +
-                    randomWord(Math.floor(Math.random() * 5))
-                      .toString()
-                      .replace("[", "")
-                      .replace("]", "")
-                      .replace('"', "")
-                      .replaceAll(",", " "),
-                  new Date(),
-                  "TEST",
-                  Math.floor(Math.random() * 100) > 20 ? "expense" : "income",
-                );
-              }}
-              size="2.5em"
-            >
-              <CgDebug size="2em" color="#113" />
-            </ActionIcon>
-          </Stack>*/}
           <Stack
             style={{
               height: "50vh",
@@ -354,9 +242,126 @@ function TransactionsTestPage({ user }: { user: any }) {
             {transactions?.map((transaction) =>
               transactionDisplay(transaction),
             )}
+            <Space h="10em" />
           </Stack>
         </Flex>
       </Stack>
+      <Center
+        style={{
+          background:
+            "linear-gradient(180deg, transparent 0%, #fff 60%, #fff 100%)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+          maskImage: "linear-gradient(to bottom, transparent 0%, black 40%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, transparent 0%, black 40%)",
+          zIndex: "2",
+          bottom: 0,
+          position: "fixed",
+          width: "100%",
+          left: 0,
+          padding: "2em",
+        }}
+      >
+        <ActionIcon
+          style={{
+            backgroundColor: "#d6d6d6",
+            padding: "0.5em",
+            transition: "all 0.75s ease",
+            zIndex: 3,
+          }}
+          className="hovershadow"
+          m="0"
+          onClick={() => {
+            if (addModalShow) {
+              setAddModalShow(false);
+              newTrsnForm.reset();
+            }
+          }}
+          size="3em"
+        >
+          <FaArrowLeft size="1em" color="#113" />
+        </ActionIcon>
+        <Space w="md" />
+        <ActionIcon
+          style={{
+            backgroundColor: "#cef89e",
+            padding: "0.5em",
+            transition: "all 0.75s ease",
+            zIndex: 3,
+          }}
+          className="hovershadow"
+          m="0"
+          onClick={async () => {
+            makeTransaction(
+              Math.floor(Math.random() * 10000),
+              "TEST" +
+                randomWord(Math.floor(Math.random() * 5))
+                  .toString()
+                  .replace("[", "")
+                  .replace("]", "")
+                  .replace('"', "")
+                  .replaceAll(",", " "),
+              new Date(),
+              "TEST",
+              Math.floor(Math.random() * 100) > 20 ? "expense" : "income",
+            );
+          }}
+          size="5em"
+        >
+          <CgDebug size="2em" color="#113" />
+        </ActionIcon>{" "}
+        <Space w="md" />{" "}
+        <ActionIcon
+          style={{
+            backgroundColor: "#cef89e",
+            padding: "0.5em",
+            transition: "all 0.75s ease",
+            zIndex: 3,
+          }}
+          className="hovershadow"
+          m="0"
+          onClick={() => {
+            if (addModalShow) setAddModalShow(false);
+            else setAddModalShow(true);
+          }}
+          size="5em"
+        >
+          <BiPlus size="2em" color="#113" />
+        </ActionIcon><Space w="md" />{" "}
+        <ActionIcon
+          style={{
+            backgroundColor: "#9ee2f8",
+            padding: "0.5em",
+            transition: "all 0.75s ease",
+            zIndex: 3,
+          }}
+          className="hovershadow"
+          m="0"
+          onClick={() => {
+            if (addModalShow) setAddModalShow(false);
+            else setAddModalShow(true);
+          }}
+          size="5em"
+        >
+          <MdOutlineSelectAll size="2em" color="#113" />
+        </ActionIcon>
+        <Space w="md" />
+        <ActionIcon
+          style={{
+            backgroundColor: "#d6d6d6",
+            padding: "0.5em",
+            transition: "all 0.75s ease",
+            zIndex: 3,
+          }}
+          className="hovershadow"
+          m="0"
+          onClick={async () => {}}
+          size="3em"
+        >
+          <FaArrowLeft size="1em" color="#113" />
+        </ActionIcon>
+      </Center>
       <Stack
         style={{
           transform: !addModalShow ? "scale(0)" : "",
@@ -367,24 +372,6 @@ function TransactionsTestPage({ user }: { user: any }) {
       >
         <Center>
           <Stack>
-            <Button
-              style={{
-                backgroundColor: "#dfdfdf",
-                padding: "0.5em",
-                transition: "all 0.75s ease",
-                color: "#113",
-              }}
-              className="hovershadow"
-              leftSection={<BiArrowBack size="1.25em" color="#113" />}
-              onClick={() => {
-                setAddModalShow(false);
-                newTrsnForm.reset();
-              }}
-              size="sm"
-              w="50%"
-            >
-              Back
-            </Button>
             <form
               onSubmit={newTrsnForm.onSubmit((values) => {
                 makeTransaction(

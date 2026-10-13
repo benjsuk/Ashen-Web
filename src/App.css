@@ -134,9 +134,11 @@
 }
 
 .main-avatar:hover {
-  filter: brightness(0.96);
+  filter: brightness(0.98);
+   backdrop-filter: brightness(0.98);
 }
 
 .main-avatar:active {
-  filter: brightness(0.9);
+  filter: brightness(0.96);
+  backdrop-filter: brightness(0.96);
 }

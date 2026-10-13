@@ -2,9 +2,11 @@ import {
   Avatar,
   Center,
   ComboboxPopover,
+  Group,
   Loader,
   Space,
   Stack,
+  Text,
   Title,
 } from "@mantine/core";
 import "./App.css";
@@ -61,12 +63,13 @@ function App() {
       </Stack>
       <Title
         style={{
-          position: "absolute",
+          position: "fixed",
           bottom: "1em",
           right: "1em",
           userSelect: "none",
           color: "#444",
           fontWeight: "200",
+          zIndex:1000
         }}
         onClick={() => {
           navigator.clipboard.writeText(pkg.version);
@@ -85,7 +88,7 @@ function App() {
         }}
       >
         <ComboboxPopover.Target>
-          <Avatar
+          <Group
             style={{
               position: "absolute",
               top: "1em",
@@ -95,14 +98,23 @@ function App() {
               fontWeight: "200",
               cursor: "pointer",
               display: user ? "" : "none",
+              borderRadius:"1em",
+              padding:"0.5em"
             }}
-            size="md"
-            radius="xl"
             className="main-avatar"
-            color="initials"
-            name={user?.displayName || undefined}
-            src={user?.photoURL}
-          />
+          >
+            <Avatar
+              size="md"
+              radius="xl"
+              color="initials"
+              name={user?.displayName || undefined}
+              src={user?.photoURL}
+              style={{
+                border:"1px solid #b0b0b0"
+              }}
+            />
+            <Text>{user?.displayName}</Text>
+          </Group>
         </ComboboxPopover.Target>
       </ComboboxPopover>
     </Center>
