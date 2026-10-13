@@ -1,26 +1,43 @@
 import {
   ActionIcon,
+  Autocomplete,
   Badge,
   Button,
   Card,
+  Center,
   Checkbox,
+  Flex,
   Group,
-  List,
+  Loader,
+  NumberFormatter,
+  NumberInput,
+  RollingNumber,
+  SegmentedControl,
+  Space,
   Stack,
   Text,
+  TextInput,
   Title,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { auth } from "../firebaseClient";
-import { signOut } from "firebase/auth";
+import type { User } from "firebase/auth";
 import { config } from "../config";
 import { generate as randomWord } from "random-words";
-import { FaPen, FaTrashCan } from "react-icons/fa6";
+import { FaPen } from "react-icons/fa6";
 import { IoMdTrash } from "react-icons/io";
+import { PiSelectionAll } from "react-icons/pi";
+import { GrRefresh } from "react-icons/gr";
+import { BiArrowBack, BiPlus } from "react-icons/bi";
+import { useForm } from "@mantine/form";
+import { DatePickerInput } from "@mantine/dates";
+import { CgDebug } from "react-icons/cg";
 
 function TransactionsTestPage({ user }: { user: any }) {
   const [transactions, setTransactions] = useState<any[]>();
   const [checkboxes, setCheckboxes] = useState<Record<string, boolean>>({});
+  const [anyChecked, setAnyChecked] = useState<boolean>(false);
+  const [addModalShow, setAddModalShow] = useState<boolean>(false);
+  const [direction, setDirection] = useState<any>("expense");
   async function getTransactions() {
     var result;
     const data = await fetch(config.apiUrl + "/transactions", {
@@ -29,7 +46,6 @@ function TransactionsTestPage({ user }: { user: any }) {
       },
     });
     result = await data.json();
-    console.log(result);
     setTransactions(await result.sort((a: any, b: any) => a.date - b.date));
   }
 
@@ -58,7 +74,6 @@ function TransactionsTestPage({ user }: { user: any }) {
     const transactionDivs = document.getElementsByClassName("transaction");
     for (let index = 0; index < transactionDivs.length; index++) {
       const element = transactionDivs[index];
-      console.log(element.className.replace("transaction ", ""));
     }
   }
 
@@ -66,8 +81,10 @@ function TransactionsTestPage({ user }: { user: any }) {
     const transactionDivs = document.getElementsByClassName("transaction");
     for (let index = 0; index < transactionDivs.length; index++) {
       const element = transactionDivs[index] as HTMLElement;
-      if (element.className.replace("transaction ", "") == id)
-        element.style.display = "none";
+      if (element.className.replace("transaction ", "") == id) {
+        element.style.transform = "scaleY(0)";
+        element.style.maxHeight = "0";
+      }
     }
     await fetch(config.apiUrl + "/transactions", {
       headers: {
@@ -80,7 +97,9 @@ function TransactionsTestPage({ user }: { user: any }) {
         id: id,
       }),
     });
-    await getTransactions();
+    setTimeout(async () => {
+      await getTransactions();
+    }, 501);
   }
 
   function transactionDisplay(trsn: any) {
@@ -88,36 +107,28 @@ function TransactionsTestPage({ user }: { user: any }) {
       <div
         key={trsn.transactionID}
         className={"transaction " + trsn.transactionID}
-        style={{ margin: "0.5em" }}
+        style={{
+          margin: "0.1em",
+          transition: "all 0.5s ease",
+          maxHeight: "10em",
+        }}
       >
         <Group w="100%" gap={0}>
-          <Checkbox
-            checked={checkboxes[trsn.transactionID] || false}
-            onChange={() => {
-              setCheckboxes({
-                ...checkboxes,
-                [trsn.transactionID]: !(
-                  checkboxes[trsn.transactionID] || false
-                ),
-              });
-            }}
-          />
           <Card
-            shadow="sm"
             withBorder
             style={{
               backgroundColor:
                 trsn.direction == "income" ? "rgb(215, 240, 215)" : "",
             }}
             w="100%"
+            radius="xs"
             flex={1}
-            m="xs"
           >
-            <Group w="100%">
+            <Group w="100%" m={0}>
               <Title
                 ta="center"
-                order={3}
-                maw="60%"
+                order={5}
+                maw="45%"
                 style={{
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
@@ -126,10 +137,10 @@ function TransactionsTestPage({ user }: { user: any }) {
               >
                 {trsn.description}
               </Title>
-              <Badge color="lightgrey" radius="sm" style={{ color: "#555" }}>
+              <Badge color="lightgrey" radius="lg" style={{ color: "#555" }}>
                 {trsn.category}
               </Badge>
-              <Text size="xs">{trsn.date.split("T")[0]}</Text>
+              {/*<Text size="xs">{trsn.date.split("T")[0]}</Text>*/}
 
               <Title
                 style={{
@@ -139,45 +150,14 @@ function TransactionsTestPage({ user }: { user: any }) {
                 }}
                 order={4}
               >
-                {trsn.direction == "income" ? "+" : ""}£
-                {(trsn.amount / 100).toFixed(2)}
+                {trsn.direction == "income" ? "+" : ""}
+                <NumberFormatter
+                  decimalScale={2}
+                  prefix="£ "
+                  value={trsn.amount / 100}
+                  thousandSeparator
+                />
               </Title>
-            </Group>
-          </Card>
-          <Card
-            radius="md"
-            withBorder
-            style={{ padding: 0, transform: "scale(0.95)" }}
-            className="trsnedit"
-          >
-            <Group gap="0" align="stretch">
-              <ActionIcon
-                style={{
-                  backgroundColor: "#98eeff",
-                  padding: "0.75em",
-                }}
-                className="hovershadow"
-                m="0"
-                radius={0}
-                size="2.5em"
-              >
-                <FaPen size="2em" color="#009bba" />
-              </ActionIcon>
-              <ActionIcon
-                style={{
-                  backgroundColor: "#ff9898",
-                  padding: "0.75em",
-                }}
-                className="hovershadow"
-                m="0"
-                radius={0}
-                onClick={() => {
-                  deleteTransaction(trsn.transactionID);
-                }}
-                size="2.5em"
-              >
-                <IoMdTrash size="2em" color="#ba0000" />
-              </ActionIcon>
             </Group>
           </Card>
         </Group>
@@ -194,71 +174,307 @@ function TransactionsTestPage({ user }: { user: any }) {
     if (any) {
       const itemboxes = document.getElementsByClassName("trsnedit");
       for (let index = 0; index < itemboxes.length; index++) {
-        console.log(itemboxes[index]);
         (itemboxes[index] as HTMLElement).classList += " collapsed";
       }
+      setAnyChecked(true);
     } else {
       const itemboxes = document.getElementsByClassName("trsnedit");
       for (let index = 0; index < itemboxes.length; index++) {
-        console.log(itemboxes[index]);
         (itemboxes[index] as HTMLElement).classList.remove("collapsed");
       }
+      setAnyChecked(false);
     }
   }, [checkboxes]);
 
+  function totalDiff() {
+    var total = 0;
+    for (let index = 0; index < (transactions ?? []).length; index++) {
+      const element = (transactions ?? [])[index];
+      if (element.direction == "income") {
+        total += element.amount;
+      } else {
+        total -= element.amount;
+      }
+    }
+    return total / 100;
+  }
+
+  const newTrsnForm = useForm({
+    initialValues: {
+      description: "",
+      amount: 0,
+      category: "",
+      date: new Date().toISOString(),
+      direction: "expense",
+    },
+
+    validate: {
+      amount: (value) => (value >= 0 ? null : "Number must be positive."),
+    },
+  });
+
   return (
-    <Stack>
-      <Title order={2}>{user?.email}</Title>
-      <List>
-        <List.Item>UID: {user?.uid}</List.Item>
-        <List.Item>Name: {user?.displayName}</List.Item>
-      </List>
-      <Button
-        onClick={async () => {
-          getTransactions();
-        }}
-      >
-        Pull Transactions
-      </Button>
+    <>
       <Stack
         style={{
-          height: "50vh",
-          overflow: "scroll",
-          padding: "1.5em",
-          flexDirection: "column-reverse",
+          transform: addModalShow ? "scale(0)" : "",
+          height: addModalShow ? "0" : "",
+          pointerEvents: addModalShow ? "none" : undefined,
+          transition: "all 0.2s ease",
         }}
       >
-        <div>
-          {transactions?.map((transaction) => transactionDisplay(transaction))}
-        </div>
+        <Title order={3} style={{textAlign:"center"}}>
+          Total Diff:{" "}
+          <RollingNumber
+            value={totalDiff()}
+            prefix="£ "
+            decimalScale={2}
+            animationDuration={350}
+            fixedDecimalScale
+            thousandSeparator
+          />
+        </Title>
+        <Space h="md" />
+        <Flex>
+          {/*<Stack>
+            <Space h="xs" />
+            <ActionIcon
+              style={{
+                backgroundColor: "#ff9898",
+                padding: "0.6em",
+                transition: "all 0.75s ease",
+                opacity: anyChecked ? "1" : "0.3",
+                pointerEvents: anyChecked ? undefined : "none",
+              }}
+              disabled={!anyChecked}
+              className="hovershadow"
+              m="0"
+              onClick={() => {
+                Object.entries(checkboxes)
+                  .filter(([, checked]) => checked)
+                  .forEach(([id]) => deleteTransaction(id));
+                setCheckboxes({});
+                setAnyChecked(false);
+              }}
+              size="2.5em"
+            >
+              <IoMdTrash size="2em" color="#ba0000" />
+            </ActionIcon>
+            <ActionIcon
+              style={{
+                backgroundColor: "#24c210",
+                padding: "0.5em",
+                transition: "all 0.75s ease",
+              }}
+              className="hovershadow"
+              m="0"
+              onClick={() => {
+                const allSelected =
+                  (transactions?.length ?? 0) > 0 &&
+                  transactions!.every((t) => checkboxes[t.transactionID]);
+                const next = Object.fromEntries(
+                  (transactions ?? []).map((t) => [
+                    t.transactionID,
+                    !allSelected,
+                  ]),
+                );
+                setCheckboxes(next);
+              }}
+              size="2.5em"
+            >
+              <PiSelectionAll size="4em" color="#fff" />
+            </ActionIcon>
+            <ActionIcon
+              style={{
+                backgroundColor: "#b8c2d6",
+                padding: "0.6em",
+                transition: "all 0.75s ease",
+              }}
+              className="hovershadow"
+              m="0"
+              onClick={() => {
+                getTransactions();
+              }}
+              size="2.5em"
+            >
+              <GrRefresh size="2em" color="#113" />
+            </ActionIcon>
+            <Space h="md" />
+            <ActionIcon
+              style={{
+                backgroundColor: "#cef89e",
+                padding: "0.5em",
+                transition: "all 0.75s ease",
+              }}
+              className="hovershadow"
+              m="0"
+              onClick={() => {
+                setAddModalShow(true);
+              }}
+              size="2.5em"
+            >
+              <BiPlus size="2em" color="#113" />
+            </ActionIcon>
+            <ActionIcon
+              style={{
+                backgroundColor: "#cef89e",
+                padding: "0.5em",
+                transition: "all 0.75s ease",
+              }}
+              className="hovershadow"
+              m="0"
+              onClick={async () => {
+                makeTransaction(
+                  Math.floor(Math.random() * 10000),
+                  "TEST" +
+                    randomWord(Math.floor(Math.random() * 5))
+                      .toString()
+                      .replace("[", "")
+                      .replace("]", "")
+                      .replace('"', "")
+                      .replaceAll(",", " "),
+                  new Date(),
+                  "TEST",
+                  Math.floor(Math.random() * 100) > 20 ? "expense" : "income",
+                );
+              }}
+              size="2.5em"
+            >
+              <CgDebug size="2em" color="#113" />
+            </ActionIcon>
+          </Stack>*/}
+          <Stack
+            style={{
+              height: "50vh",
+              width: "100%",
+              padding: "0.5em",
+            }}
+            gap={0}
+          >
+              {transactions?.map((transaction) =>
+                transactionDisplay(transaction),
+              )}
+          </Stack>
+        </Flex>
       </Stack>
-      <Button
-        onClick={async () => {
-          makeTransaction(
-            Math.floor(Math.random() * 10000),
-            "TEST" +
-              randomWord(Math.floor(Math.random() * 5))
-                .toString()
-                .replace("[", "")
-                .replace("]", "")
-                .replace('"', "")
-                .replaceAll(",", " "),
-            new Date(),
-            "TEST",
-            Math.floor(Math.random() * 100) > 20 ? "expense" : "income",
-          );
+      <Stack
+        style={{
+          transform: !addModalShow ? "scale(0)" : "",
+          pointerEvents: !addModalShow ? "none" : undefined,
+          transition: "all 0.2s ease",
+          height: !addModalShow ? "0" : "",
         }}
       >
-        Make Test Transaction
-      </Button>
-      <Button
-        onClick={async () => {
-          await signOut(auth);
-        }}
-      >
-        Sign Out
-      </Button>
-    </Stack>
+        <Center>
+          <Stack>
+            <Button
+              style={{
+                backgroundColor: "#dfdfdf",
+                padding: "0.5em",
+                transition: "all 0.75s ease",
+                color: "#113",
+              }}
+              className="hovershadow"
+              leftSection={<BiArrowBack size="1.25em" color="#113" />}
+              onClick={() => {
+                setAddModalShow(false);
+                newTrsnForm.reset();
+              }}
+              size="sm"
+              w="50%"
+            >
+              Back
+            </Button>
+            <form
+              onSubmit={newTrsnForm.onSubmit((values) => {
+                makeTransaction(
+                  Math.abs(values.amount * 100),
+                  values.description,
+                  new Date(values.date),
+                  values.category,
+                  direction,
+                );
+                setAddModalShow(false);
+                newTrsnForm.reset();
+              })}
+            >
+              <NumberInput
+                key={newTrsnForm.key("amount")}
+                {...newTrsnForm.getInputProps("amount")}
+                label="Amount"
+                withAsterisk
+              />
+              <SegmentedControl
+                data={[
+                  { label: "Expense", value: "expense" },
+                  { label: "Income", value: "income" },
+                ]}
+                defaultValue="Expense"
+                value={direction}
+                onChange={setDirection}
+                w="100%"
+                mt="0.7em"
+              />
+              <TextInput
+                key={newTrsnForm.key("description")}
+                {...newTrsnForm.getInputProps("description")}
+                label="Description"
+                withAsterisk
+              />
+              <Autocomplete
+                data={[
+                  "Eating Out",
+                  "Groceries",
+                  "Transport",
+                  "Fuel",
+                  "Rent / Mortgage",
+                  "Utilities",
+                  "Bills",
+                  "Entertainment",
+                  "Shopping",
+                  "Clothing",
+                  "Health",
+                  "Gym",
+                  "Subscriptions",
+                  "Travel",
+                  "Pets",
+                  "Gifts",
+                  "Education",
+                  "Insurance",
+                  "Coffee",
+                  "Alcohol",
+                  "Home",
+                  "Misc",
+                  "Salary",
+                  "Freelance",
+                  "Side Hustle",
+                  "Interest",
+                  "Dividends",
+                  "Investments",
+                  "Refunds",
+                  "Other",
+                ]}
+                key={newTrsnForm.key("category")}
+                {...newTrsnForm.getInputProps("category")}
+                label="Category"
+                withAsterisk
+              />
+
+              <DatePickerInput
+                key={newTrsnForm.key("date")}
+                {...newTrsnForm.getInputProps("date")}
+                label="Date"
+                withAsterisk
+              />
+              <Space h="md" />
+              <Button type="submit" w="100%">
+                Register
+              </Button>
+            </form>
+          </Stack>
+        </Center>
+      </Stack>
+    </>
   );
 }
 

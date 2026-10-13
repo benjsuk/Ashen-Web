@@ -11,35 +11,91 @@
 }
 
 .hovershadow {
-  transition: all 0.3s;
+  transition: all 0.2s ease;
   z-index: 1;
   border: none !important;
   box-shadow: none !important;
 }
 
 .hovershadow svg {
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
   transform-origin: center;
 }
 
 .hovershadow:hover svg {
-  transform: scale(1.3);
+  transform: scale(1.15);
 }
 
 .hovershadow:hover {
-  filter: saturate(1.1) brightness(1.1);
+  filter: saturate(1.08) brightness(1.04);
   cursor: pointer;
   z-index: 2;
 }
 
 .hovershadow:active {
-  filter: saturate(1.7) brightness(0.8);
+  filter: saturate(1.2) brightness(0.9);
   cursor: pointer;
   z-index: 0;
 }
 
+.transaction-screen {
+  min-height: 26rem;
+}
+
+.transaction-tools {
+  flex: 0 0 3.3rem;
+  padding-top: 0.5rem;
+}
+
+.transaction-layout {
+  width: 100%;
+  min-width: 0;
+}
+
+.transaction-list {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+  min-height: 18rem;
+  max-height: 50vh;
+  overflow-y: auto;
+  padding: 0.25rem 0.25rem 1rem;
+  scrollbar-width: thin;
+}
+
+.transaction-list::-webkit-scrollbar {
+  width: 0.5rem;
+}
+
+.transaction-list::-webkit-scrollbar-thumb {
+  background: rgba(17, 17, 19, 0.16);
+  border-radius: 999px;
+}
+
+.transaction-card {
+  flex: 0 0 auto;
+  min-height: 3.75rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.transaction-card:hover {
+  transform: translateY(-1px);
+}
+
+.transaction-card.selected {
+  box-shadow: 0 0 0 1px rgba(17, 17, 19, 0.12);
+}
+
+.selection-strip {
+  border: 1px solid rgba(17, 17, 19, 0.09);
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  transition: all 0.2s ease;
+}
+
 .trsnedit {
-  transition: all 0.5s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease, max-width 0.2s ease;
   max-width: 6em;
   height: 2.5em;
   overflow: visible;
@@ -50,8 +106,28 @@
   background-color: #ff9898 !important;
 }
 
-.trsnedit.collapsed {
-  transform: scaleX(0) !important;
-  opacity: 0;
-  max-width: 0em;
+.empty-state {
+  border-style: dashed !important;
+  background: rgba(17, 17, 19, 0.02);
+}
+
+.composer-panel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease, opacity 0.2s ease, transform 0.2s ease;
+  transform-origin: top center;
+  transform: scaleY(0.98);
+}
+
+.composer-panel.open {
+  max-height: 42rem;
+  transform: scaleY(1);
+}
+
+.main-avatar:hover {
+  filter: brightness(0.96);
+}
+
+.main-avatar:active {
+  filter: brightness(0.9);
 }
