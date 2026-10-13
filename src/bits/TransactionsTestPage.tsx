@@ -223,7 +223,7 @@ function TransactionsTestPage({ user }: { user: any }) {
           transition: "all 0.2s ease",
         }}
       >
-        <Title order={3} style={{textAlign:"center"}}>
+        <Title order={3} style={{ textAlign: "center" }}>
           Total Diff:{" "}
           <RollingNumber
             value={totalDiff()}
@@ -351,9 +351,9 @@ function TransactionsTestPage({ user }: { user: any }) {
             }}
             gap={0}
           >
-              {transactions?.map((transaction) =>
-                transactionDisplay(transaction),
-              )}
+            {transactions?.map((transaction) =>
+              transactionDisplay(transaction),
+            )}
           </Stack>
         </Flex>
       </Stack>

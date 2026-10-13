@@ -122,7 +122,9 @@ async function responseError(response: Response) {
 
 function parseTransactions(data: unknown): Transaction[] {
   if (!Array.isArray(data)) {
-    throw new Error("The transactions response was not in the expected format.");
+    throw new Error(
+      "The transactions response was not in the expected format.",
+    );
   }
 
   return data.map((item: unknown) => {
@@ -148,9 +150,7 @@ function parseTransactions(data: unknown): Transaction[] {
       description: transaction.description,
       date: transaction.date,
       category:
-        typeof transaction.category === "string"
-          ? transaction.category
-          : null,
+        typeof transaction.category === "string" ? transaction.category : null,
       direction: transaction.direction,
     };
   });
@@ -205,11 +205,7 @@ const TransactionRow = memo(function TransactionRow({
           }}
           aria-hidden="true"
         >
-          {transaction.direction === "income" ? (
-            <FaArrowDown />
-          ) : (
-            <FaArrowUp />
-          )}
+          {transaction.direction === "income" ? <FaArrowDown /> : <FaArrowUp />}
         </div>
         <Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
           <Text fw={600} truncate>
@@ -280,8 +276,7 @@ function TransactionsPage({ user }: { user: User }) {
       direction: "expense",
     },
     validate: {
-      description: (value) =>
-        value.trim() ? null : "Enter a description.",
+      description: (value) => (value.trim() ? null : "Enter a description."),
       amount: (value) =>
         Number(value) > 0 ? null : "Enter an amount greater than zero.",
       date: (value) => (value ? null : "Choose a date."),
@@ -302,7 +297,8 @@ function TransactionsPage({ user }: { user: User }) {
       }
       const result = parseTransactions(await response.json());
       result.sort(
-        (a, b) => transactionDate(b.date).getTime() - transactionDate(a.date).getTime(),
+        (a, b) =>
+          transactionDate(b.date).getTime() - transactionDate(a.date).getTime(),
       );
       setTransactions(result);
       setSelected((current) =>
@@ -342,8 +338,7 @@ function TransactionsPage({ user }: { user: User }) {
   const visibleTransactions = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase();
     return transactions.filter((transaction) => {
-      const matchesType =
-        filter === "all" || transaction.direction === filter;
+      const matchesType = filter === "all" || transaction.direction === filter;
       const matchesQuery =
         !normalizedQuery ||
         `${transaction.description} ${transaction.category ?? ""}`
@@ -372,18 +367,21 @@ function TransactionsPage({ user }: { user: User }) {
     setFormOpen(true);
   }
 
-  const openEditTransaction = useCallback((transaction: Transaction) => {
-    setEditing(transaction);
-    form.setValues({
-      description: transaction.description,
-      amount: transaction.amount / 100,
-      category: transaction.category ?? "",
-      date: transactionDateInput(transaction.date),
-      direction: transaction.direction,
-    });
-    form.clearErrors();
-    setFormOpen(true);
-  }, [form]);
+  const openEditTransaction = useCallback(
+    (transaction: Transaction) => {
+      setEditing(transaction);
+      form.setValues({
+        description: transaction.description,
+        amount: transaction.amount / 100,
+        category: transaction.category ?? "",
+        date: transactionDateInput(transaction.date),
+        direction: transaction.direction,
+      });
+      form.clearErrors();
+      setFormOpen(true);
+    },
+    [form],
+  );
 
   async function saveTransaction(values: TransactionFormValues) {
     if (!values.date) return;
@@ -533,9 +531,7 @@ function TransactionsPage({ user }: { user: User }) {
 
         {selectedIds.length > 0 && (
           <Group className="selection-strip" justify="space-between">
-            <Text size="sm">
-              {selectedIds.length} selected
-            </Text>
+            <Text size="sm">{selectedIds.length} selected</Text>
             <Group gap="xs">
               <Button
                 variant="subtle"
@@ -703,7 +699,8 @@ function TransactionsPage({ user }: { user: User }) {
               color="red"
               loading={deleting}
               onClick={() =>
-                deleteConfirmation && void deleteTransactions(deleteConfirmation)
+                deleteConfirmation &&
+                void deleteTransactions(deleteConfirmation)
               }
             >
               Delete

@@ -52,7 +52,7 @@ function App() {
 
         <Space h="lg" />
         {user?.email == undefined ? (
-          <div style={{height:"50vh"}}>
+          <div style={{ height: "50vh" }}>
             <LoginPage setLoading={setLoading} />
           </div>
         ) : (

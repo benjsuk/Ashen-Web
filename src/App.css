@@ -75,7 +75,10 @@
 .transaction-card {
   flex: 0 0 auto;
   min-height: 3.75rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .transaction-card:hover {
@@ -95,7 +98,10 @@
 }
 
 .trsnedit {
-  transition: transform 0.2s ease, opacity 0.2s ease, max-width 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease,
+    max-width 0.2s ease;
   max-width: 6em;
   height: 2.5em;
   overflow: visible;
@@ -114,7 +120,10 @@
 .composer-panel {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.25s ease, opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    max-height 0.25s ease,
+    opacity 0.2s ease,
+    transform 0.2s ease;
   transform-origin: top center;
   transform: scaleY(0.98);
 }
