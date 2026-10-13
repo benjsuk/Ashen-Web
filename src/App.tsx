@@ -72,7 +72,7 @@ function App() {
           userSelect: "none",
           color: "#444",
           fontWeight: "200",
-          zIndex:1000
+          zIndex: 1000,
         }}
         onClick={() => {
           navigator.clipboard.writeText(pkg.version);
@@ -101,8 +101,8 @@ function App() {
               fontWeight: "200",
               cursor: "pointer",
               display: user ? "" : "none",
-              borderRadius:"1em",
-              padding:"0.5em"
+              borderRadius: "1em",
+              padding: "0.5em",
             }}
             className="main-avatar"
           >
@@ -113,7 +113,7 @@ function App() {
               name={user?.displayName || undefined}
               src={user?.photoURL}
               style={{
-                border:"1px solid #b0b0b0"
+                border: "1px solid #b0b0b0",
               }}
             />
             <Text>{user?.displayName}</Text>
