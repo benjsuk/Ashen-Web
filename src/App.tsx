@@ -47,14 +47,14 @@ function App() {
     <Center h="100vh">
       {" "}
       <Stack maw="90vw" w="50em">
-        <Space mih="10vh"/>
+        <Space mih="10vh" />
         <Title
           ta="center"
           style={{ fontSize: "3em", userSelect: "none", height: "7vh" }}
         >
           Ashen
         </Title>
- <Space mih="2vh"/>
+        <Space mih="2vh" />
         <Space h="lg" />
         {user?.email == undefined ? (
           <div style={{ height: "50vh" }}>

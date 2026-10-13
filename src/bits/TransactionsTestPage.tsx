@@ -239,9 +239,13 @@ function TransactionsTestPage({ user }: { user: any }) {
               >
                 {trsn.description}
               </Title>
-              {window.innerWidth > 500 ?<Badge color="lightgrey" radius="lg" style={{ color: "#555" }}>
-                {trsn.category}
-              </Badge> : <></>}
+              {window.innerWidth > 500 ? (
+                <Badge color="lightgrey" radius="lg" style={{ color: "#555" }}>
+                  {trsn.category}
+                </Badge>
+              ) : (
+                <></>
+              )}
               <Text size="xs">{formatTransactionDate(trsn.date)}</Text>
 
               <Title
@@ -358,7 +362,7 @@ function TransactionsTestPage({ user }: { user: any }) {
                 }}
               />
             </Stack>
-          </Card> 
+          </Card>
           <Card
             withBorder
             w="fit-content"
@@ -448,7 +452,7 @@ function TransactionsTestPage({ user }: { user: any }) {
             padding: "0.5em",
             transition: "all 0.75s ease",
             zIndex: 3,
-            display:"none"
+            display: "none",
           }}
           className="hovershadow"
           m="0"
@@ -683,7 +687,7 @@ function TransactionsTestPage({ user }: { user: any }) {
                 Add
               </Button>
             </form>
-            <Space mih="10vh"/>
+            <Space mih="10vh" />
           </Stack>
         </Center>
       </Stack>
