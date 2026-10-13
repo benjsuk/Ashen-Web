@@ -113,7 +113,6 @@ function TransactionsTestPage({ user }: { user: any }) {
         }}
       >
         <Group w="100%" gap={0}>
-          
           <Card
             withBorder
             style={{
@@ -125,21 +124,23 @@ function TransactionsTestPage({ user }: { user: any }) {
             flex={1}
           >
             <Group w="100%" m={0}>
-              <Checkbox style={{
-                width: checkboxShow ? "1.25rem" : "0",
-                minWidth: checkboxShow ? "1.25rem" : "0",
-                maxWidth: checkboxShow ? "1.25rem" : "0",
-                overflow: "hidden",
-                transform: checkboxShow ? "" : "scaleX(0)",
-                transition: "width 0.3s ease, min-width 0.3s ease, max-width 0.3s ease, transform 0.5s ease"
-              }} 
-              checked={checkboxes[trsn.transactionID] ?? false}
-              onChange={(event) =>
-                setCheckboxes((current) => ({
-                  ...current,
-                  [trsn.transactionID]: event.target.checked,
-                }))
-              }
+              <Checkbox
+                style={{
+                  width: checkboxShow ? "1.25rem" : "0",
+                  minWidth: checkboxShow ? "1.25rem" : "0",
+                  maxWidth: checkboxShow ? "1.25rem" : "0",
+                  overflow: "hidden",
+                  transform: checkboxShow ? "" : "scaleX(0)",
+                  transition:
+                    "width 0.3s ease, min-width 0.3s ease, max-width 0.3s ease, transform 0.5s ease",
+                }}
+                checked={checkboxes[trsn.transactionID] ?? false}
+                onChange={(event) =>
+                  setCheckboxes((current) => ({
+                    ...current,
+                    [trsn.transactionID]: event.target.checked,
+                  }))
+                }
               />
               <Title
                 ta="center"
@@ -353,12 +354,12 @@ function TransactionsTestPage({ user }: { user: any }) {
         <Space w="md" />{" "}
         <ActionIcon
           style={{
-            backgroundColor:"#9ee2f8",
+            backgroundColor: "#9ee2f8",
             padding: "0.5em",
             transition: "all 0.75s ease",
             zIndex: 3,
-            filter:  checkboxShow ? "brightness(0.96)" : undefined,
-            transform: checkboxShow ? "scale(1.1)" : undefined
+            filter: checkboxShow ? "brightness(0.96)" : undefined,
+            transform: checkboxShow ? "scale(1.1)" : undefined,
           }}
           className="hovershadow"
           m="0"
@@ -368,31 +369,35 @@ function TransactionsTestPage({ user }: { user: any }) {
           }}
           size="5em"
         >
-          {checkboxShow? <RiCheckboxFill size="2em" color="#113" /> : <RiCheckboxLine size="2em" color="#113" />}
+          {checkboxShow ? (
+            <RiCheckboxFill size="2em" color="#113" />
+          ) : (
+            <RiCheckboxLine size="2em" color="#113" />
+          )}
         </ActionIcon>
         <Space w="md" />
         <ActionIcon
-              style={{
-                backgroundColor: "#ff9898",
-                padding: "0.6em",
-                transition: "all 0.75s ease",
-                opacity: anyChecked ? "1" : "0.3",
-                pointerEvents: anyChecked ? undefined : "none",
-              }}
-              disabled={!anyChecked}
-              className="hovershadow"
-              m="0"
-              onClick={() => {
-                Object.entries(checkboxes)
-                  .filter(([, checked]) => checked)
-                  .forEach(([id]) => deleteTransaction(id));
-                setCheckboxes({});
-                setAnyChecked(false);
-              }}
-              size="3em"
-            >
-              <IoMdTrash size="2em" color="#ba0000" />
-            </ActionIcon>
+          style={{
+            backgroundColor: "#ff9898",
+            padding: "0.6em",
+            transition: "all 0.75s ease",
+            opacity: anyChecked ? "1" : "0.3",
+            pointerEvents: anyChecked ? undefined : "none",
+          }}
+          disabled={!anyChecked}
+          className="hovershadow"
+          m="0"
+          onClick={() => {
+            Object.entries(checkboxes)
+              .filter(([, checked]) => checked)
+              .forEach(([id]) => deleteTransaction(id));
+            setCheckboxes({});
+            setAnyChecked(false);
+          }}
+          size="3em"
+        >
+          <IoMdTrash size="2em" color="#ba0000" />
+        </ActionIcon>
       </Center>
       <Stack
         style={{

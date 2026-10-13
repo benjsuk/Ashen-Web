@@ -64,23 +64,24 @@ function App() {
         )}
       </Stack>
       <Tooltip label={"Web Release: " + config.releaseName}>
-      <Title
-        style={{
-          position: "fixed",
-          bottom: "1em",
-          right: "1em",
-          userSelect: "none",
-          color: "#444",
-          fontWeight: "200",
-          zIndex: 1000,
-        }}
-        onClick={() => {
-          navigator.clipboard.writeText(pkg.version);
-        }}
-        order={4}
-      >
-        v{pkg.version}
-      </Title></Tooltip>
+        <Title
+          style={{
+            position: "fixed",
+            bottom: "1em",
+            right: "1em",
+            userSelect: "none",
+            color: "#444",
+            fontWeight: "200",
+            zIndex: 1000,
+          }}
+          onClick={() => {
+            navigator.clipboard.writeText(pkg.version);
+          }}
+          order={4}
+        >
+          v{pkg.version}
+        </Title>
+      </Tooltip>
       <ComboboxPopover
         data={["Sign Out"]}
         comboboxProps={{ width: 150, position: "bottom-start" }}
