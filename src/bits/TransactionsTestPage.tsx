@@ -60,8 +60,18 @@ function formatTransactionDate(input: any) {
   const suffix =
     day >= 11 && day <= 13 ? "th" : ["st", "nd", "rd"][(day % 10) - 1] || "th";
   const monthLabel = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ][month];
 
   const oneYearAgo = new Date(
@@ -232,9 +242,7 @@ function TransactionsTestPage({ user }: { user: any }) {
               <Badge color="lightgrey" radius="lg" style={{ color: "#555" }}>
                 {trsn.category}
               </Badge>
-              <Text size="xs">
-                {formatTransactionDate(trsn.date)}
-              </Text>
+              <Text size="xs">{formatTransactionDate(trsn.date)}</Text>
 
               <Title
                 style={{
@@ -519,7 +527,11 @@ function TransactionsTestPage({ user }: { user: any }) {
           }}
           size="3em"
         >
-          {selectAllState ?<MdDeselect size="2em" color="#4a4f8f" />  : <MdSelectAll size="2em" color="#8084b7" />}
+          {selectAllState ? (
+            <MdDeselect size="2em" color="#4a4f8f" />
+          ) : (
+            <MdSelectAll size="2em" color="#8084b7" />
+          )}
         </ActionIcon>
       </Center>
       <Stack
