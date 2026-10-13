@@ -14,6 +14,7 @@ import {
   SegmentedControl,
   Space,
   Stack,
+  Text,
   TextInput,
   Title,
 } from "@mantine/core";
@@ -25,10 +26,53 @@ import { BiPlus } from "react-icons/bi";
 import { useForm } from "@mantine/form";
 import { DatePickerInput } from "@mantine/dates";
 import { CgDebug } from "react-icons/cg";
-import { MdOutlineSelectAll } from "react-icons/md";
+import { MdDeselect, MdSelectAll } from "react-icons/md";
 import { IoMdTrash } from "react-icons/io";
-import { TbCheckbox } from "react-icons/tb";
 import { RiCheckboxFill, RiCheckboxLine } from "react-icons/ri";
+
+function formatTransactionDate(input: any) {
+  let date: Date;
+
+  if (input instanceof Date) {
+    date = input;
+  } else if (typeof input === "string" && /^\d{4}-\d{2}-\d{2}$/.test(input)) {
+    // Date-only strings are parsed as local midnight to avoid timezone shifts.
+    const [year, month, day] = input.split("-").map(Number);
+    date = new Date(year, month - 1, day);
+  } else {
+    date = new Date(input);
+  }
+
+  if (isNaN(date.getTime())) return "";
+
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
+
+  if (date.getTime() === today.getTime()) return "Today";
+  if (date.getTime() === yesterday.getTime()) return "Yesterday";
+
+  const suffix =
+    day >= 11 && day <= 13 ? "th" : ["st", "nd", "rd"][(day % 10) - 1] || "th";
+  const monthLabel = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  ][month];
+
+  const oneYearAgo = new Date(
+    today.getFullYear() - 1,
+    today.getMonth(),
+    today.getDate(),
+  );
+  const showYear = date < oneYearAgo;
+
+  return `${day}${suffix} ${monthLabel}${showYear ? ` ${year}` : ""}`;
+}
 
 function TransactionsTestPage({ user }: { user: any }) {
   const [transactions, setTransactions] = useState<any[]>();
@@ -37,6 +81,7 @@ function TransactionsTestPage({ user }: { user: any }) {
   const [checkboxShow, setCheckboxShow] = useState<boolean>(false);
   const [addModalShow, setAddModalShow] = useState<boolean>(false);
   const [direction, setDirection] = useState<any>("expense");
+  const [selectAllState, setSelectAllState] = useState<boolean>(false);
   async function getTransactions() {
     var result;
     const data = await fetch(config.apiUrl + "/transactions", {
@@ -48,57 +93,74 @@ function TransactionsTestPage({ user }: { user: any }) {
     setTransactions(await result.sort((a: any, b: any) => a.date - b.date));
   }
 
-  async function makeTransaction(
+  function makeTransaction(
     amount: number,
     description: string,
     date: Date,
     category: string,
     direction: string,
   ) {
-    await fetch(config.apiUrl + "/transactions", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + (await user?.getIdToken()),
-      },
-      method: "POST",
-      body: JSON.stringify({
-        amount: amount,
-        description: description,
-        date: date.toISOString(),
-        category: category,
-        direction: direction,
-      }),
-    });
-    await getTransactions();
-    const transactionDivs = document.getElementsByClassName("transaction");
-    for (let index = 0; index < transactionDivs.length; index++) {
-      const element = transactionDivs[index];
-    }
+    const optimistic = {
+      transactionID:
+        "temp-" + Date.now() + "-" + Math.random().toString(36).slice(2),
+      amount: amount,
+      description: description,
+      date: date,
+      category: category,
+      direction: direction,
+    };
+
+    setTransactions((current) => [...(current ?? []), optimistic]);
+
+    (async () => {
+      try {
+        await fetch(config.apiUrl + "/transactions", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + (await user?.getIdToken()),
+          },
+          method: "POST",
+          body: JSON.stringify({
+            amount: amount,
+            description: description,
+            date: date.toISOString(),
+            category: category,
+            direction: direction,
+          }),
+        });
+      } finally {
+        await getTransactions();
+      }
+    })();
   }
 
-  async function deleteTransaction(id: string) {
-    const transactionDivs = document.getElementsByClassName("transaction");
-    for (let index = 0; index < transactionDivs.length; index++) {
-      const element = transactionDivs[index] as HTMLElement;
-      if (element.className.replace("transaction ", "") == id) {
-        element.style.transform = "scaleY(0)";
-        element.style.maxHeight = "0";
-      }
-    }
-    await fetch(config.apiUrl + "/transactions", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + (await user?.getIdToken()),
-      },
-      method: "POST",
-      body: JSON.stringify({
-        delete: true,
-        id: id,
-      }),
+  function deleteTransaction(id: string) {
+    setTransactions((current) =>
+      (current ?? []).filter((t) => t.transactionID !== id),
+    );
+    setCheckboxes((current) => {
+      const next = { ...current };
+      delete next[id];
+      return next;
     });
-    setTimeout(async () => {
-      await getTransactions();
-    }, 501);
+
+    (async () => {
+      try {
+        await fetch(config.apiUrl + "/transactions", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + (await user?.getIdToken()),
+          },
+          method: "POST",
+          body: JSON.stringify({
+            delete: true,
+            id: id,
+          }),
+        });
+      } finally {
+        await getTransactions();
+      }
+    })();
   }
 
   function transactionDisplay(trsn: any) {
@@ -110,6 +172,16 @@ function TransactionsTestPage({ user }: { user: any }) {
           margin: "0.1em",
           transition: "all 0.5s ease",
           maxHeight: "10em",
+        }}
+        onClick={() => {
+          const thisCheckbox = document.getElementById(
+            "check" + trsn.transactionID,
+          ) as HTMLInputElement;
+          thisCheckbox.checked = !thisCheckbox.checked;
+          setCheckboxes((current) => ({
+            ...current,
+            [trsn.transactionID]: thisCheckbox.checked,
+          }));
         }}
       >
         <Group w="100%" gap={0}>
@@ -133,7 +205,10 @@ function TransactionsTestPage({ user }: { user: any }) {
                   transform: checkboxShow ? "" : "scaleX(0)",
                   transition:
                     "width 0.3s ease, min-width 0.3s ease, max-width 0.3s ease, transform 0.5s ease",
+                  pointerEvents: "none",
                 }}
+                id={"check" + trsn.transactionID}
+                className="trsn-checkbox"
                 checked={checkboxes[trsn.transactionID] ?? false}
                 onChange={(event) =>
                   setCheckboxes((current) => ({
@@ -157,7 +232,9 @@ function TransactionsTestPage({ user }: { user: any }) {
               <Badge color="lightgrey" radius="lg" style={{ color: "#555" }}>
                 {trsn.category}
               </Badge>
-              {/*<Text size="xs">{trsn.date.split("T")[0]}</Text>*/}
+              <Text size="xs">
+                {formatTransactionDate(trsn.date)}
+              </Text>
 
               <Title
                 style={{
@@ -397,6 +474,52 @@ function TransactionsTestPage({ user }: { user: any }) {
           size="3em"
         >
           <IoMdTrash size="2em" color="#ba0000" />
+        </ActionIcon>
+        <Space w="md" />
+        <ActionIcon
+          style={{
+            backgroundColor: "#d4ddff",
+            padding: "0.6em",
+            opacity: checkboxShow ? "1" : "0.3",
+            pointerEvents: checkboxShow ? undefined : "none",
+            width: checkboxShow ? undefined : "0",
+            minWidth: checkboxShow ? undefined : "0",
+            maxWidth: checkboxShow ? undefined : "0",
+            overflow: "hidden",
+            transform: checkboxShow ? "" : "scaleX(0)",
+            transition:
+              "width 0.3s ease, min-width 0.3s ease, max-width 0.3s ease, transform 0.5s ease",
+          }}
+          disabled={!checkboxShow}
+          className="hovershadow"
+          m="0"
+          onClick={() => {
+            if (!anyChecked) setSelectAllState(false);
+            const allCheckboxes =
+              document.getElementsByClassName("trsn-checkbox");
+            const nextSelectAll = !selectAllState;
+            setSelectAllState(nextSelectAll);
+            setCheckboxes((current) => {
+              const next = { ...current };
+              for (let i = 0; i < allCheckboxes.length; i++) {
+                const checkboxOuter = allCheckboxes[i] as HTMLElement;
+                const checkbox = checkboxOuter.querySelector(
+                  ".mantine-Checkbox-input",
+                ) as HTMLInputElement;
+                const transactionID = checkbox.id.slice("check".length);
+                const transaction = (transactions ?? []).find(
+                  (t) => t.transactionID === transactionID,
+                );
+                if (transaction) {
+                  next[transaction.transactionID] = nextSelectAll;
+                }
+              }
+              return next;
+            });
+          }}
+          size="3em"
+        >
+          {selectAllState ?<MdDeselect size="2em" color="#4a4f8f" />  : <MdSelectAll size="2em" color="#8084b7" />}
         </ActionIcon>
       </Center>
       <Stack
