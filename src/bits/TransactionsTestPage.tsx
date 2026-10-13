@@ -239,9 +239,9 @@ function TransactionsTestPage({ user }: { user: any }) {
               >
                 {trsn.description}
               </Title>
-              <Badge color="lightgrey" radius="lg" style={{ color: "#555" }}>
+              {window.innerWidth > 500 ?<Badge color="lightgrey" radius="lg" style={{ color: "#555" }}>
                 {trsn.category}
-              </Badge>
+              </Badge> : <></>}
               <Text size="xs">{formatTransactionDate(trsn.date)}</Text>
 
               <Title
@@ -325,17 +325,69 @@ function TransactionsTestPage({ user }: { user: any }) {
           transition: "all 0.2s ease",
         }}
       >
-        <Title order={3} style={{ textAlign: "center" }}>
-          Total Diff:{" "}
-          <RollingNumber
-            value={totalDiff()}
-            prefix="£ "
-            decimalScale={2}
-            animationDuration={350}
-            fixedDecimalScale
-            thousandSeparator
-          />
-        </Title>
+        <Group
+          style={{
+            justifyContent: "space-evenly",
+            width: "100%",
+          }}
+        >
+          <Card
+            withBorder
+            w="fit-content"
+            p="1.4em 2.1em 1.4em 2.1em"
+            style={{
+              background:
+                totalDiff() > 0
+                  ? "linear-gradient(0deg,rgba(136, 255, 115, 1) 0%, rgba(255, 255, 255, 1) 100%)"
+                  : "linear-gradient(0deg,rgb(255, 210, 210) 0%, rgba(255, 255, 255, 1) 100%)",
+            }}
+          >
+            <Stack>
+              <Text ta="center">Total Diff</Text>
+              <RollingNumber
+                value={totalDiff()}
+                prefix="£ "
+                decimalScale={2}
+                animationDuration={350}
+                fixedDecimalScale
+                thousandSeparator
+                style={{
+                  fontSize: "1.6em",
+                  textAlign: "center",
+                  color: totalDiff() > 0 ? "green" : "red",
+                }}
+              />
+            </Stack>
+          </Card> 
+          <Card
+            withBorder
+            w="fit-content"
+            p="1.4em 2.1em 1.4em 2.1em"
+            style={{
+              background:
+                totalDiff() > 0
+                  ? "linear-gradient(0deg,rgba(136, 255, 115, 1) 0%, rgba(255, 255, 255, 1) 100%)"
+                  : "linear-gradient(0deg,rgb(255, 210, 210) 0%, rgba(255, 255, 255, 1) 100%)",
+            }}
+          >
+            <Stack>
+              <Text ta="center">Total Diff</Text>
+              <RollingNumber
+                value={totalDiff()}
+                prefix="£ "
+                decimalScale={2}
+                animationDuration={350}
+                fixedDecimalScale
+                thousandSeparator
+                style={{
+                  fontSize: "1.6em",
+                  textAlign: "center",
+                  color: totalDiff() > 0 ? "green" : "red",
+                }}
+              />
+            </Stack>
+          </Card>
+        </Group>
         <Space h="md" />
         <Flex>
           <Stack
@@ -396,6 +448,7 @@ function TransactionsTestPage({ user }: { user: any }) {
             padding: "0.5em",
             transition: "all 0.75s ease",
             zIndex: 3,
+            display:"none"
           }}
           className="hovershadow"
           m="0"
@@ -444,7 +497,7 @@ function TransactionsTestPage({ user }: { user: any }) {
             transition: "all 0.75s ease",
             zIndex: 3,
             filter: checkboxShow ? "brightness(0.96)" : undefined,
-            transform: checkboxShow ? "scale(1.1)" : undefined,
+            transform: checkboxShow ? "scale(1.25)" : undefined,
           }}
           className="hovershadow"
           m="0"
@@ -486,7 +539,7 @@ function TransactionsTestPage({ user }: { user: any }) {
         <Space w="md" />
         <ActionIcon
           style={{
-            backgroundColor: "#d4ddff",
+            backgroundColor: "#abbdff",
             padding: "0.6em",
             opacity: checkboxShow ? "1" : "0.3",
             pointerEvents: checkboxShow ? undefined : "none",
@@ -528,9 +581,9 @@ function TransactionsTestPage({ user }: { user: any }) {
           size="3em"
         >
           {selectAllState ? (
-            <MdDeselect size="2em" color="#4a4f8f" />
+            <MdDeselect size="2em" color="#00075e" />
           ) : (
-            <MdSelectAll size="2em" color="#8084b7" />
+            <MdSelectAll size="2em" color="#3a42ac" />
           )}
         </ActionIcon>
       </Center>
@@ -627,9 +680,10 @@ function TransactionsTestPage({ user }: { user: any }) {
               />
               <Space h="md" />
               <Button type="submit" w="100%">
-                Register
+                Add
               </Button>
             </form>
+            <Space mih="10vh"/>
           </Stack>
         </Center>
       </Stack>
