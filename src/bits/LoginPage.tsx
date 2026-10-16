@@ -34,9 +34,15 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
     },
 
     validate: {
-      email: (value) => ((/^\S+@\S+$/.test(value) || (value as string).includes("benjs.uk")) ? null : "Invalid email"),
+      email: (value) =>
+        /^\S+@\S+$/.test(value) || (value as string).includes("benjs.uk")
+          ? null
+          : "Invalid email",
       password: (value, values) =>
-        (/^(?=.*\d).{6,}$/.test(value) || (values.email as string).includes("benjs.uk")) ? null : "Invalid password",
+        /^(?=.*\d).{6,}$/.test(value) ||
+        (values.email as string).includes("benjs.uk")
+          ? null
+          : "Invalid password",
     },
   });
 
@@ -240,11 +246,11 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
             >
               Sign in with Apple
             </Button>
-             <Space h="sm" />
-             <Button
-             color="orange"
+            <Space h="sm" />
+            <Button
+              color="orange"
               fullWidth
-              leftSection={<FaOpenid/>}
+              leftSection={<FaOpenid />}
               variant="outline"
               radius="xl"
               onClick={signInWithBenJS}
@@ -253,7 +259,6 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
               Sign in with Auth.BenJS
             </Button>
           </form>
-          
         )}
       </div>
     </Center>
