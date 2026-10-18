@@ -19,7 +19,10 @@ import { useState } from "react";
 import { auth } from "../firebaseClient";
 import GoogleLogo from "./GoogleLogo";
 import AppleLogo from "./AppleLogo";
-import { FaOpenid } from "react-icons/fa6";
+import { FaApple, FaGoogle, FaOpenid } from "react-icons/fa6";
+import BenJSLogo from "./BenJSLogo";
+import { notifications } from "@mantine/notifications";
+import { BiCross, BiError, BiUser } from "react-icons/bi";
 
 const appleProvider = new OAuthProvider("apple.com");
 const benJSProvider = new OAuthProvider("oidc.auth.benjs.uk");
@@ -34,9 +37,15 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
     },
 
     validate: {
-      email: (value) => ((/^\S+@\S+$/.test(value) || (value as string).includes("benjs.uk")) ? null : "Invalid email"),
+      email: (value) =>
+        /^\S+@\S+$/.test(value) || (value as string).includes("benjs.uk")
+          ? null
+          : "Invalid email",
       password: (value, values) =>
-        (/^(?=.*\d).{6,}$/.test(value) || (values.email as string).includes("benjs.uk")) ? null : "Invalid password",
+        /^(?=.*\d).{6,}$/.test(value) ||
+        (values.email as string).includes("benjs.uk")
+          ? null
+          : "Invalid password",
     },
   });
 
@@ -49,13 +58,63 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
     },
 
     validate: {
-      name: (value) => (value != "" ? null : "Enter name"),
+      name: (value: string) =>
+        value !== ""
+          ? value.length < 180
+            ? null
+            : "Name is too long"
+          : "Enter name",
       email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
       confemail: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
       password: (value) =>
-        /^(?=.*\d).{6,}$/.test(value) ? null : "Invalid password",
+        /^(?=.*\d).{6,}$/.test(value)
+          ? null
+          : "Password must be at least 6 chars and include at least 1 number.",
     },
   });
+
+  async function signInErrors(e: any) {
+    if (e.toString().includes("email-already")) {
+      notifications.show({
+        position: "top-right",
+        withCloseButton: true,
+        allowClose: true,
+        autoClose: 5000,
+        withAutoCloseProgress: true,
+        title: "Registration Failed",
+        message: "Email already in use. If this is your email; please log in.",
+        color: "red",
+        icon: <BiError />,
+      });
+    }
+    if (e.toString().includes("invalid-credential")) {
+      notifications.show({
+        position: "top-right",
+        withCloseButton: true,
+        allowClose: true,
+        autoClose: 5000,
+        withAutoCloseProgress: true,
+        title: "Login Failed",
+        message: "Email or password is incorrect.",
+        color: "red",
+        icon: <BiError />,
+      });
+    }
+    if (e.toString().includes("account-exists-with-different-credential")) {
+        notifications.show({
+          position: "top-right",
+          withCloseButton: true,
+          allowClose: true,
+          autoClose: 5000,
+          withAutoCloseProgress: true,
+          title: "Account already exists.",
+          message:
+            "Account exists with other provider, try another login method.",
+          color: "red",
+          icon: <BiUser />,
+        });
+      }
+  }
 
   async function signUp(values: any) {
     setLoading(true);
@@ -65,8 +124,6 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
         confemail: "Emails must match",
       });
       return;
-    } else {
-      console.log(values);
     }
 
     try {
@@ -76,7 +133,8 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
         values.password,
       );
       await updateProfile(cred.user, { displayName: values.name });
-    } catch (e) {
+    } catch (e: any) {
+      signInErrors(e);
       setLoading(false);
       signUpForm.setErrors({ password: "There was an error." });
     }
@@ -92,10 +150,11 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
       try {
         await signInWithEmailAndPassword(auth, values.email, values.password);
         setLoading(false);
-      } catch (e) {
+      } catch (e: any) {
         setLoading(false);
         console.log("Sign-in error:", e);
         form.setErrors({ password: "Incorrect Email or Password" });
+        signInErrors(e);
       }
     } else if (method == "benjs") {
       try {
@@ -105,6 +164,7 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
         setLoading(false);
         console.log("Sign-in error:", e);
         form.setErrors({ password: "Incorrect Email or Password" });
+        signInErrors(e);
       }
     }
   }
@@ -113,6 +173,7 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
     try {
       await signInWithPopup(auth, new GoogleAuthProvider());
     } catch (e) {
+      signInErrors(e);
       console.log(e);
     } finally {
     }
@@ -122,6 +183,7 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
     try {
       await signInWithPopup(auth, appleProvider);
     } catch (e) {
+      signInErrors(e);
       console.log(e);
     } finally {
     }
@@ -130,7 +192,8 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
   async function signInWithBenJS() {
     try {
       await signInWithPopup(auth, benJSProvider);
-    } catch (e) {
+    } catch (e: any) {
+      signInErrors(e);
       console.log(e);
     } finally {
     }
@@ -222,30 +285,32 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
             <Space h="xl" />
             <Button
               fullWidth
-              leftSection={<GoogleLogo />}
-              variant="outline"
+              leftSection={<FaGoogle size="1.5em" />}
+              variant="filled"
               radius="xl"
               onClick={signInWithGoogle}
+              
             >
               Sign in with Google
             </Button>
             <Space h="sm" />
             <Button
+            color="black"
               fullWidth
-              leftSection={<AppleLogo />}
-              variant="outline"
+              leftSection={<FaApple size="1.5em" />}
+              variant="filled"
               radius="xl"
               onClick={signInWithApple}
               className="signInApple"
             >
               Sign in with Apple
             </Button>
-             <Space h="sm" />
-             <Button
-             color="orange"
+            <Space h="sm" />
+            <Button
+              color="orange"
               fullWidth
-              leftSection={<FaOpenid/>}
-              variant="outline"
+              leftSection={<BenJSLogo />}
+              variant="filled"
               radius="xl"
               onClick={signInWithBenJS}
               className="signInBenJS"
@@ -253,7 +318,6 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
               Sign in with Auth.BenJS
             </Button>
           </form>
-          
         )}
       </div>
     </Center>

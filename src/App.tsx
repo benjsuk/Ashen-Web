@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import "./App.css";
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import type { User } from "firebase/auth";
@@ -22,6 +23,8 @@ import pkg from "../package.json";
 import "@mantine/dates/styles.css";
 import TransactionsTestPage from "./bits/TransactionsTestPage";
 import { config } from "./config";
+import { notifications } from "@mantine/notifications";
+import { BiError, BiUser } from "react-icons/bi";
 
 function App() {
   const [user, setUser] = useState<User>();
@@ -44,85 +47,112 @@ function App() {
   }
 
   return (
-    <Center h="100vh">
-      {" "}
-      <Stack maw="90vw" w="50em">
-        <Space mih="10vh" />
-        <Title
-          ta="center"
-          style={{ fontSize: "3em", userSelect: "none", height: "7vh" }}
-        >
-          Ashen
-        </Title>
-        <Space mih="2vh" />
-        <Space h="lg" />
-        {user?.email == undefined ? (
-          <div style={{ height: "50vh" }}>
-            <LoginPage setLoading={setLoading} />
-          </div>
-        ) : (
-          <TransactionsTestPage user={user} />
-        )}
-      </Stack>
-      <Tooltip label={"Web Release: " + config.releaseName}>
-        <Title
-          style={{
-            position: "fixed",
-            bottom: "1em",
-            right: "1em",
-            userSelect: "none",
-            color: "#444",
-            fontWeight: "200",
-            zIndex: 1000,
-          }}
-          onClick={() => {
-            navigator.clipboard.writeText(pkg.version);
-          }}
-          order={4}
-        >
-          v{pkg.version}
-        </Title>
-      </Tooltip>
-      <ComboboxPopover
-        data={["Sign Out"]}
-        comboboxProps={{ width: 150, position: "bottom-start" }}
-        onChange={(value) => {
-          if (value == "Sign Out") {
-            signOut(auth);
-          }
-        }}
+    <>
+      <Space h="10vh" />
+      <Title
+        ta="center"
+        style={{ fontSize: "3em", userSelect: "none", height: "7vh" }}
       >
-        <ComboboxPopover.Target>
-          <Group
+        Ashen
+      </Title>
+      <Center h="90vh">
+        {" "}
+        <Stack maw="90vw" w="50em">
+          <Space h="2vh" />
+          <Space h="lg" />
+          {user?.email == undefined ? (
+            <div style={{ height: "50vh" }}>
+              <LoginPage setLoading={setLoading} />
+            </div>
+          ) : (
+            <TransactionsTestPage user={user} />
+          )}
+        </Stack>
+        <Tooltip label={"Web Release: " + config.releaseName}>
+          <Title
             style={{
-              position: "absolute",
-              top: "1em",
-              left: "1em",
+              position: "fixed",
+              bottom: "1em",
+              right: "1em",
               userSelect: "none",
               color: "#444",
               fontWeight: "200",
-              cursor: "pointer",
-              display: user ? "" : "none",
-              borderRadius: "1em",
-              padding: "0.5em",
+              zIndex: 1000,
             }}
-            className="main-avatar"
+            onClick={() => {
+              navigator.clipboard.writeText(pkg.version);
+            }}
+            order={4}
           >
-            <Avatar
-              size="md"
-              radius="xl"
-              color="initials"
-              name={user?.displayName || undefined}
-              src={user?.photoURL}
+            v{pkg.version}
+          </Title>
+        </Tooltip>
+        <ComboboxPopover
+          data={["Sign Out"]}
+          comboboxProps={{ width: 150, position: "bottom-start" }}
+          onChange={async (value) => {
+            if (value == "Sign Out") {
+              notifications.show({
+                position: "top-right",
+                withCloseButton: true,
+                allowClose: true,
+                autoClose: 5000,
+                withAutoCloseProgress: true,
+                message: "Signing Out...",
+                color: "grey",
+                icon: <BiUser />,
+              });
+              try {
+                await signOut(auth);
+                await window.location.reload();
+              } catch (e: any) {
+                notifications.show({
+                  position: "top-right",
+                  withCloseButton: true,
+                  allowClose: true,
+                  autoClose: 5000,
+                  withAutoCloseProgress: true,
+                  title: "Sign Out Failed",
+                  message: "Please Try Again.",
+                  color: "red",
+                  icon: <BiError />,
+                });
+              }
+            }
+          }}
+        >
+          <ComboboxPopover.Target>
+            <Group
               style={{
-                border: "1px solid #b0b0b0",
+                position: "absolute",
+                top: "1em",
+                left: "1em",
+                userSelect: "none",
+                color: "#444",
+                fontWeight: "200",
+                cursor: "pointer",
+                display: user ? "" : "none",
+                borderRadius: "1em",
+                padding: "0.5em",
               }}
-            />
-            <Text>{user?.displayName}</Text>
-          </Group>
-        </ComboboxPopover.Target>
-      </ComboboxPopover>
-    </Center>
+              className="main-avatar"
+            >
+              <Avatar
+                size="md"
+                radius="xl"
+                color="initials"
+                name={user?.displayName || undefined}
+                src={user?.photoURL}
+                style={{
+                  border: "1px solid #b0b0b0",
+                }}
+              />
+              <Text>{user?.displayName}</Text>
+            </Group>
+          </ComboboxPopover.Target>
+        </ComboboxPopover>
+      </Center>
+    </>
   );
 }
 

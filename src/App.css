@@ -1,9 +1,3 @@
-.signInApple {
-  --button-color: black !important;
-  background-color: white !important;
-  filter: invert();
-}
-
 .signInApple:hover {
   --button-color: black !important;
   background-color: #aaa !important;
