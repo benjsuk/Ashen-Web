@@ -101,19 +101,19 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
       });
     }
     if (e.toString().includes("account-exists-with-different-credential")) {
-        notifications.show({
-          position: "top-right",
-          withCloseButton: true,
-          allowClose: true,
-          autoClose: 5000,
-          withAutoCloseProgress: true,
-          title: "Account already exists.",
-          message:
-            "Account exists with other provider, try another login method.",
-          color: "red",
-          icon: <BiUser />,
-        });
-      }
+      notifications.show({
+        position: "top-right",
+        withCloseButton: true,
+        allowClose: true,
+        autoClose: 5000,
+        withAutoCloseProgress: true,
+        title: "Account already exists.",
+        message:
+          "Account exists with other provider, try another login method.",
+        color: "red",
+        icon: <BiUser />,
+      });
+    }
   }
 
   async function signUp(values: any) {
@@ -289,13 +289,12 @@ function LoginPage({ setLoading }: { setLoading: (b: boolean) => void }) {
               variant="filled"
               radius="xl"
               onClick={signInWithGoogle}
-              
             >
               Sign in with Google
             </Button>
             <Space h="sm" />
             <Button
-            color="black"
+              color="black"
               fullWidth
               leftSection={<FaApple size="1.5em" />}
               variant="filled"

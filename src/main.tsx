@@ -8,7 +8,7 @@ import { Notifications } from "@mantine/notifications";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <MantineProvider>
-      <Notifications/>
+      <Notifications />
       <App />
     </MantineProvider>
   </StrictMode>,
